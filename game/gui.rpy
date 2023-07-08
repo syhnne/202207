@@ -16,7 +16,7 @@ init python:
 ################################################################################
 ## GUI 配置变量
 ################################################################################
-
+define gui.low_performance_mode = gui.preference("low_performance_mode", False)
 
 ## 颜色 ##########################################################################
 ##
@@ -53,20 +53,23 @@ define gui.interface_text_color = '#ffffff'
 
 ## 字体和字体大小 #####################################################################
 
-## 游戏内文本使用的字体。
-define gui.text_font = "SourceHanSansLite.ttf"
+## 用于游戏内文本的字体。
+define gui.text_font = gui.preference("text_font", "俐方体11号.ttf")
 
-## 角色名称使用的字体。
-define gui.name_text_font = "SourceHanSansLite.ttf"
+## 用于角色名称的字体。
+define gui.name_text_font = gui.preference("text_font", "俐方体11号.ttf")
 
-## 游戏外文本使用的字体。
-define gui.interface_text_font = "SourceHanSansLite.ttf"
+## 用于游戏外文本的字体。
+define gui.interface_text_font = gui.preference("text_font", "SourceHanSansSC-Normal.otf")
 
 ## 普通对话文本的大小。
-define gui.text_size = 33
+define gui.text_size = gui.preference("interface_text_size", 35)
+
+## 已读文本
+define gui.read_color = gui.preference("read_color", '#ffffff')
 
 ## 角色名称的大小。
-define gui.name_text_size = 45
+define gui.name_text_size = gui.text_size + 8
 
 ## 游戏用户界面中文本的大小。
 define gui.interface_text_size = 33
@@ -101,14 +104,14 @@ define gui.textbox_yalign = 1.0
 
 ## 叙述角色名字相对于文本框的位置。可以是从左侧或顶部起的整数像素，或设为 0.5 来
 ## 居中。
-define gui.name_xpos = 360
-define gui.name_ypos = 0
+define gui.name_xpos = 280
+define gui.name_ypos = 20
 
 ## 角色名字的水平对齐方式。0.0 为左侧对齐，0.5 为居中显示，而 1.0 为右侧对齐。
 define gui.name_xalign = 0.0
 
 ## 包含角色名字的方框的宽度、高度和边框尺寸，或设为 None 来自动确定其大小。
-define gui.namebox_width = None
+define gui.namebox_width = 200
 define gui.namebox_height = None
 
 ## 包含角色名字的方框的边界尺寸，以左、上、右、下顺序排列。
@@ -120,11 +123,11 @@ define gui.namebox_tile = False
 
 ## 对话相对于文本框的位置。可以是相对于文本框从左侧或顶部起的整数像素，或设为
 ## 0.5 来居中。
-define gui.dialogue_xpos = 402
-define gui.dialogue_ypos = 75
+define gui.dialogue_xpos = 520
+define gui.dialogue_ypos = 30
 
 ## 对话文本的最大宽度，以像素为单位。
-define gui.dialogue_width = 1116
+define gui.dialogue_width = 1000
 
 ## 对话文本的水平对齐方式。0.0 为左侧对齐，0.5 为居中显示，而 1.0 为右侧对齐。
 define gui.dialogue_text_xalign = 0.0

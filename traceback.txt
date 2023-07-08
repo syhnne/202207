@@ -1,0 +1,22 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/options.rpy", line 121, in script
+    define config.mouse['default']=[ ('gui/mouse/default.png',0,0) ]
+TypeError: 'NoneType' object does not support item assignment
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "game/options.rpy", line 121, in script
+    define config.mouse['default']=[ ('gui/mouse/default.png',0,0) ]
+  File "D:\renpy-7.4.4-sdk\renpy\ast.py", line 2508, in execute
+    self.set()
+  File "D:\renpy-7.4.4-sdk\renpy\ast.py", line 2546, in set
+    base[key] = new
+TypeError: 'NoneType' object does not support item assignment
+
+Windows-10-10.0.22621 AMD64
+Ren'Py 8.1.1.23060707
+202307 1.0
+Sat Jul  8 13:33:16 2023

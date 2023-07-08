@@ -226,12 +226,9 @@ style choice_button_text is default:
 
 
 ## 快捷菜单界面 ######################################################################
-##
-## 快捷菜单显示于游戏内，以便于访问游戏外的菜单。
 
 screen quick_menu():
 
-    ## 确保该菜单出现在其他界面之上，
     zorder 100
 
     if quick_menu:
@@ -240,19 +237,18 @@ screen quick_menu():
             style_prefix "quick"
 
             xalign 0.5
-            yalign 1.0
+            yalign 0.96
 
             textbutton _("回退") action Rollback()
-            textbutton _("历史") action ShowMenu('history')
+            textbutton _("历史") action MenuHideInterface('history')
             textbutton _("快进") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("自动") action Preference("auto-forward", "toggle")
-            textbutton _("保存") action ShowMenu('save')
+            textbutton _("保存") action MenuHideInterface('save')
             textbutton _("快存") action QuickSave()
             textbutton _("快读") action QuickLoad()
-            textbutton _("设置") action ShowMenu('preferences')
+            textbutton _("设置") action MenuHideInterface('preferences')
 
 
-## 此代码确保只要用户没有主动隐藏界面，就会在游戏中显示 quick_menu 界面。
 init python:
     config.overlay_screens.append("quick_menu")
 
@@ -268,88 +264,61 @@ style quick_button_text:
     properties gui.button_text_properties("quick_button")
 
 
-################################################################################
-## 标题和游戏菜单界面
-################################################################################
-
 ## 导航界面 ########################################################################
-##
-## 该界面包含在标题菜单和游戏菜单中，并提供导航到其他菜单，以及启动游戏。
+
 
 screen navigation():
 
     vbox:
         style_prefix "navigation"
-
         xpos gui.navigation_xpos
         yalign 0.5
-
         spacing gui.navigation_spacing
 
         if main_menu:
-
             textbutton _("开始游戏") action Start()
 
         else:
-
             textbutton _("历史") action ShowMenu("history")
-
             textbutton _("保存") action ShowMenu("save")
 
         textbutton _("读取游戏") action ShowMenu("load")
-
         textbutton _("设置") action ShowMenu("preferences")
 
         if _in_replay:
-
             textbutton _("结束回放") action EndReplay(confirm=True)
 
         elif not main_menu:
-
             textbutton _("标题界面") action MainMenu()
 
         textbutton _("关于") action ShowMenu("about")
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
-
-            ## “帮助”对移动设备来说并非必需或相关。
             textbutton _("帮助") action ShowMenu("help")
 
         if renpy.variant("pc"):
-
-            ## 退出按钮在 iOS 上是被禁止使用的，在安卓和网页上也不是必要的。
             textbutton _("退出") action Quit(confirm=not main_menu)
 
 
 style navigation_button is gui_button
 style navigation_button_text is gui_button_text
-
 style navigation_button:
     size_group "navigation"
     properties gui.button_properties("navigation_button")
-
 style navigation_button_text:
     properties gui.button_text_properties("navigation_button")
 
 
 ## 标题菜单界面 ######################################################################
-##
-## 用于在 Ren'Py 启动时显示标题菜单。
-##
-## https://www.renpy.cn/doc/screen_special.html#main-menu
+
 
 screen main_menu():
-
-    ## 此语句可确保替换掉任何其他菜单界面。
     tag menu
-
     add gui.main_menu_background
 
-    ## 此空框可使标题菜单变暗。
     frame:
         style "main_menu_frame"
 
-    ## use 语句将其他的界面包含进此界面。标题界面的实际内容在导航界面中。
     use navigation
 
     if gui.show_name:
@@ -369,26 +338,21 @@ style main_menu_vbox is vbox
 style main_menu_text is gui_text
 style main_menu_title is main_menu_text
 style main_menu_version is main_menu_text
-
 style main_menu_frame:
     xsize 420
     yfill True
 
     background "gui/overlay/main_menu.png"
-
 style main_menu_vbox:
     xalign 1.0
     xoffset -30
     xmaximum 1200
     yalign 1.0
     yoffset -30
-
 style main_menu_text:
     properties gui.text_properties("main_menu", accent=True)
-
 style main_menu_title:
     properties gui.text_properties("title")
-
 style main_menu_version:
     properties gui.text_properties("version")
 
@@ -401,17 +365,21 @@ style main_menu_version:
 ## scroll 参数可以是 None，也可以是 viewport 或 vpgrid。当此界面与一个或多个子界
 ## 面同时使用时，这些子界面将被嵌入（放置）在其中。
 
+default menuscrsdata = None
+
 screen game_menu(title, scroll=None, yinitial=0.0):
 
     style_prefix "game_menu"
 
     if main_menu:
         add gui.main_menu_background
-    else:
-        add gui.game_menu_background
+    elif menuscrsdata:
+        $ s = im.Data(menuscrsdata, "screenshot.png")
+        add Transform(s, zoom=6, blur=15)
 
     frame:
         style "game_menu_outer_frame"
+        background "gui/overlay/game_menu.png"
 
         hbox:
 
@@ -430,9 +398,7 @@ screen game_menu(title, scroll=None, yinitial=0.0):
                         mousewheel True
                         draggable True
                         pagekeys True
-
                         side_yfill True
-
                         vbox:
                             transclude
 
@@ -464,8 +430,9 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     label title
 
-    if main_menu:
-        key "game_menu" action ShowMenu("main_menu")
+    if not main_menu:
+        key 's' action Return()
+    key 'K_ESCAPE' action Return()
 
 
 style game_menu_outer_frame is empty
@@ -710,6 +677,13 @@ screen preferences():
                         label _("显示")
                         textbutton _("窗口") action Preference("display", "window")
                         textbutton _("") action Preference("display", "fullscreen")
+
+                    vbox:
+                        style_prefix "radio"
+                        label '窗口大小'
+                        textbutton '1920*1080' action Function(renpy.set_physical_size,(1920,1080))
+                        textbutton '1600*900' action Function(renpy.set_physical_size,(1600,900))
+                        textbutton '1280*720' action Function(renpy.set_physical_size,(1280,720))
 
                 vbox:
                     style_prefix "check"
@@ -1398,7 +1372,7 @@ screen quick_menu():
             textbutton _("回退") action Rollback()
             textbutton _("快进") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("自动") action Preference("auto-forward", "toggle")
-            textbutton _("菜单") action ShowMenu()
+            textbutton _("菜单") action MenuHideInterface()
 
 
 style window:
