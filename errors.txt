@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "renpy/common/00speechbubble.rpy", line 384: 'areapicker' is not a keyword argument or valid child for the screen statement.
-    areapicker:
-              ^
+File "game/script.rpy", line 98: end of line expected.
+    show rule01 with dissolve at top
+                              ^
 
-Ren'Py Version: Ren'Py 8.0.3.22090809
-Sat Jul  8 11:17:58 2023
+Ren'Py Version: Ren'Py 8.1.1.23060707
+Sun Jul  9 20:53:28 2023

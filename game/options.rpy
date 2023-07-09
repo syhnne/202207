@@ -120,9 +120,11 @@ define config.keymap = dict(
 
 define config.mouse = {}
 define config.mouse['default']=[ ('gui/mouse/default.png',0,0) ]
-
-init python:
-    default_mouse = "default"
+define config.rollback_enabled = config.developer
+define config.has_quicksave = False
+define config.has_autosave = False
+define config.save_json_callbacks = [ ]
+# define config.narrator_menu = False
 
 ## 基础 ##########################################################################
 
@@ -252,7 +254,7 @@ default preferences.afm_time = 15
 ##
 ## 该语句通常不应变更，若要变更，应为有效字符串而不是表达式。
 
-define config.save_directory = "202307-1688780880"
+define config.save_directory = "game\saves"
 
 
 ## 图标 ##########################################################################

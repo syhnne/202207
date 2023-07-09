@@ -1,22 +1,48 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
-While running game code:
-  File "game/options.rpy", line 121, in script
-    define config.mouse['default']=[ ('gui/mouse/default.png',0,0) ]
-TypeError: 'NoneType' object does not support item assignment
+After initialization, but before game start.
+  File "game/screens.rpy", line 202, in prepare_screen
+    screen choice(items):
+  File "game/screens.rpy", line 202, in prepare
+    screen choice(items):
+  File "game/screens.rpy", line 205, in prepare
+    vbox:
+  File "game/screens.rpy", line 205, in prepare
+    vbox:
+SyntaxError: unexpected EOF while parsing (game/screens.rpy, line 206)
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/options.rpy", line 121, in script
-    define config.mouse['default']=[ ('gui/mouse/default.png',0,0) ]
-  File "D:\renpy-7.4.4-sdk\renpy\ast.py", line 2508, in execute
-    self.set()
-  File "D:\renpy-7.4.4-sdk\renpy\ast.py", line 2546, in set
-    base[key] = new
-TypeError: 'NoneType' object does not support item assignment
+  File "D:\renpy-7.4.4-sdk\renpy\bootstrap.py", line 275, in bootstrap
+    renpy.main.main()
+  File "D:\renpy-7.4.4-sdk\renpy\main.py", line 670, in main
+    run(restart)
+  File "D:\renpy-7.4.4-sdk\renpy\main.py", line 93, in run
+    renpy.display.screen.prepare_screens()
+  File "D:\renpy-7.4.4-sdk\renpy\display\screen.py", line 1003, in prepare_screens
+    s.ast.prepare_screen()
+  File "game/screens.rpy", line 202, in prepare_screen
+    screen choice(items):
+  File "game/screens.rpy", line 202, in prepare
+    screen choice(items):
+  File "game/screens.rpy", line 205, in prepare
+    vbox:
+  File "game/screens.rpy", line 205, in prepare
+    vbox:
+  File "D:\renpy-7.4.4-sdk\renpy\py3analysis.py", line 808, in ast_eval
+    return self.ast_eval_literal(expr)[0]
+  File "D:\renpy-7.4.4-sdk\renpy\py3analysis.py", line 790, in ast_eval_literal
+    expr = py_compile(expr, 'eval', ast_node=True)
+  File "D:\renpy-7.4.4-sdk\renpy\python.py", line 1088, in py_compile
+    raise e
+  File "D:\renpy-7.4.4-sdk\renpy\python.py", line 1034, in py_compile
+    raise orig_e
+  File "D:\renpy-7.4.4-sdk\renpy\python.py", line 1027, in py_compile
+    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+SyntaxError: unexpected EOF while parsing (game/screens.rpy, line 206)
 
 Windows-10-10.0.22621 AMD64
 Ren'Py 8.1.1.23060707
 202307 1.0
-Sat Jul  8 13:33:16 2023
+Sun Jul  9 17:00:16 2023

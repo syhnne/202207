@@ -83,14 +83,6 @@ style frame:
 
 
 ## 对话界面 ########################################################################
-##
-## 对话界面用于向用户显示对话。它需要两个参数，who 和 what，分别是叙述角色的名字
-## 和所叙述的文本。（如果没有名字，参数 who 可以是 None。）
-##
-## 此界面必须创建一个 id 为 what 的文本可视控件，因为 Ren'Py 使用它来管理文本显
-## 示。它还可以创建 id 为 who 和 id 为 window 的可视控件来应用样式属性。
-##
-## https://www.renpy.cn/doc/screen_special.html#say
 
 screen say(who, what):
     style_prefix "say"
@@ -108,8 +100,7 @@ screen say(who, what):
         text what id "what"
 
 
-    ## 如果有对话框头像，会将其显示在文本之上。请不要在手机界面下显示这个，因为
-    ## 没有空间。
+    ## 如果有对话框头像，会将其显示在文本之上。请不要在手机界面下显示这个，因为没有空间。
     if not renpy.variant("small"):
         add SideImage() xalign 0.0 yalign 1.0
 
@@ -160,12 +151,6 @@ style say_dialogue:
     adjust_spacing False
 
 ## 输入界面 ########################################################################
-##
-## 此界面用于显示 renpy.input。prompt 参数用于传递文本提示。
-##
-## 此界面必须创建一个 id 为 input 的输入可视控件来接受各种输入参数。
-##
-## https://www.renpy.cn/doc/screen_special.html#input
 
 screen input(prompt):
     style_prefix "input"
@@ -193,16 +178,12 @@ style input:
 
 
 ## 选择界面 ########################################################################
-##
-## 此界面用于显示由 menu 语句生成的游戏内选项。参数 items 是一个对象列表，每个对
-## 象都有字幕和动作字段。
-##
-## https://www.renpy.cn/doc/screen_special.html#choice
 
 screen choice(items):
     style_prefix "choice"
-
+#775-86*len(items)-(len(items)-1)*gui.choice_spacing
     vbox:
+        ypos 780-len(items)*43-len(items)*gui.choice_spacing+gui.choice_spacing
         for i in items:
             textbutton i.caption action i.action
 
@@ -218,8 +199,17 @@ style choice_vbox:
 
     spacing gui.choice_spacing
 
+transform choicemove:
+    easeout 0.4 xoffset 5
+    easein 0.4 xoffset 0
+    repeat
+image choice_button_fg_i = Composite((855,86),(33,27),'gui/button/choice_fg.png',)
+image choice_button_fg_h = At( Composite((855,86),(33,27),'gui/button/choice_fg.png',) , choicemove)
+
 style choice_button is default:
     properties gui.button_properties("choice_button")
+    hover_foreground 'choice_button_fg_h'
+    idle_foreground 'choice_button_fg_i'
 
 style choice_button_text is default:
     properties gui.button_text_properties("choice_button")
@@ -239,13 +229,13 @@ screen quick_menu():
             xalign 0.5
             yalign 0.96
 
-            textbutton _("回退") action Rollback()
+            # textbutton _("回退") action Rollback()
             textbutton _("历史") action MenuHideInterface('history')
             textbutton _("快进") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("自动") action Preference("auto-forward", "toggle")
             textbutton _("保存") action MenuHideInterface('save')
-            textbutton _("快存") action QuickSave()
-            textbutton _("快读") action QuickLoad()
+            # textbutton _("快存") action QuickSave()
+            # textbutton _("快读") action QuickLoad()
             textbutton _("设置") action MenuHideInterface('preferences')
 
 
@@ -293,8 +283,8 @@ screen navigation():
 
         textbutton _("关于") action ShowMenu("about")
 
-        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
-            textbutton _("帮助") action ShowMenu("help")
+        # if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
+        #     textbutton _("帮助") action ShowMenu("help")
 
         if renpy.variant("pc"):
             textbutton _("退出") action Quit(confirm=not main_menu)
@@ -488,20 +478,11 @@ style return_button:
 
 
 ## 关于界面 ########################################################################
-##
-## 此界面提供有关游戏和 Ren'Py 的制作人员和版权信息。
-##
-## 此界面没有什么特别之处，因此它也可以作为一个例子来说明如何制作一个自定义界
-## 面。
 
 screen about():
-
     tag menu
 
-    ## 此 use 语句将 game_menu 界面包含到了这个界面内。子级 vbox 将包含在
-    ## game_menu 界面的 viewport 内。
     use game_menu(_("关于"), scroll="viewport"):
-
         style_prefix "about"
 
         vbox:
@@ -519,45 +500,27 @@ screen about():
 style about_label is gui_label
 style about_label_text is gui_label_text
 style about_text is gui_text
-
 style about_label_text:
     size gui.label_text_size
 
 
 ## 读取和保存界面 #####################################################################
-##
-## 这些界面负责让用户保存游戏并能够再次读取。由于它们几乎完全一样，因此这两个界
-## 面都是以第三个界面 file_slots 来实现的。
-##
-## https://www.renpy.cn/doc/screen_special.html#save https://www.renpy.cn/doc/
-## screen_special.html#load
 
 screen save():
-
     tag menu
-
     use file_slots(_("保存"))
 
-
 screen load():
-
     tag menu
-
     use file_slots(_("读取游戏"))
 
 
 screen file_slots(title):
-
     default page_name_value = FilePageNameInputValue(pattern=_("第 {} 页"), auto=_("自动存档"), quick=_("快速存档"))
-
     use game_menu(title):
 
         fixed:
-
-            ## 此代码确保输入控件在任意按钮执行前可以获取 enter 事件。
             order_reverse True
-
-            ## 页面名称，可以通过单击按钮进行编辑。
             button:
                 style "page_label"
 
@@ -569,7 +532,6 @@ screen file_slots(title):
                     style "page_label_text"
                     value page_name_value
 
-            ## 存档位网格。
             grid gui.file_slot_cols gui.file_slot_rows:
                 style_prefix "slot"
 
@@ -597,7 +559,6 @@ screen file_slots(title):
 
                         key "save_delete" action FileDelete(slot)
 
-            ## 用于访问其他页面的按钮。
             hbox:
                 style_prefix "page"
 
@@ -654,10 +615,6 @@ style slot_button_text:
 
 
 ## 设置界面 ########################################################################
-##
-## 设置界面允许用户配置游戏，使其更适合自己。
-##
-## https://www.renpy.cn/doc/screen_special.html#preferences
 
 screen preferences():
 
@@ -692,8 +649,12 @@ screen preferences():
                     textbutton _("选项后继续") action Preference("after choices", "toggle")
                     textbutton _("忽略转场") action InvertSelected(Preference("transitions", "toggle"))
 
-                ## 可在此处添加 radio_pref 或 check_pref 类型的额外 vbox，以添加
-                ## 额外的创建者定义的偏好设置。
+                if config.developer:
+                    vbox:
+                        style_prefix "radio"
+                        label '低配模式'
+                        textbutton '打开' action [Function(gui.SetPreference("low_performance_mode", True)), SetVariable('menuscrsdata', None)]
+                        textbutton '关闭' action Function(gui.SetPreference("low_performance_mode", False))
 
             null height (4 * gui.pref_spacing)
 
@@ -840,7 +801,6 @@ screen history():
 
             window:
 
-                ## 此代码可确保如果 history_height 为 None 时仍可正常显示条目。
                 has fixed:
                     yfit True
 
@@ -850,20 +810,19 @@ screen history():
                         style "history_name"
                         substitute False
 
-                        ## 从 Character 对象中获取叙述角色的文字颜色，如果设置了
-                        ## 的话。
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
                 $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
                 text what:
                     substitute False
+                
+            null height 20
 
         if not _history_list:
             label _("尚无对话历史记录。")
 
 
-## 此代码决定了允许在历史记录界面上显示哪些标签。
 
 define gui.history_allow_tags = { "alt", "noalt", "rt", "rb", "art" }
 
@@ -888,10 +847,12 @@ style history_name:
     xsize gui.history_name_width
 
 style history_name_text:
+    font gui.text_font
     min_width gui.history_name_width
     text_align gui.history_name_xalign
 
 style history_text:
+    font gui.text_font
     xpos gui.history_text_xpos
     ypos gui.history_text_ypos
     xanchor gui.history_text_xalign
@@ -908,164 +869,161 @@ style history_label_text:
 
 
 ## 帮助界面 ########################################################################
-##
-## 提供有关键盘和鼠标映射信息的界面。它使用其它界面（keyboard_help、mouse_help
-## 和 gamepad_help）来显示实际的帮助内容。
 
-screen help():
+# screen help():
 
-    tag menu
+#     tag menu
 
-    default device = "keyboard"
+#     default device = "keyboard"
 
-    use game_menu(_("帮助"), scroll="viewport"):
+#     use game_menu(_("帮助"), scroll="viewport"):
 
-        style_prefix "help"
+#         style_prefix "help"
 
-        vbox:
-            spacing 23
+#         vbox:
+#             spacing 23
 
-            hbox:
+#             hbox:
 
-                textbutton _("键盘") action SetScreenVariable("device", "keyboard")
-                textbutton _("鼠标") action SetScreenVariable("device", "mouse")
+#                 textbutton _("键盘") action SetScreenVariable("device", "keyboard")
+#                 textbutton _("鼠标") action SetScreenVariable("device", "mouse")
 
-                if GamepadExists():
-                    textbutton _("手柄") action SetScreenVariable("device", "gamepad")
+#                 if GamepadExists():
+#                     textbutton _("手柄") action SetScreenVariable("device", "gamepad")
 
-            if device == "keyboard":
-                use keyboard_help
-            elif device == "mouse":
-                use mouse_help
-            elif device == "gamepad":
-                use gamepad_help
+#             if device == "keyboard":
+#                 use keyboard_help
+#             elif device == "mouse":
+#                 use mouse_help
+#             elif device == "gamepad":
+#                 use gamepad_help
 
 
-screen keyboard_help():
+# screen keyboard_help():
 
-    hbox:
-        label _("回车")
-        text _("推进对话并激活界面。")
+#     hbox:
+#         label _("回车")
+#         text _("推进对话并激活界面。")
 
-    hbox:
-        label _("空格")
-        text _("在没有选择的情况下推进对话。")
+#     hbox:
+#         label _("空格")
+#         text _("在没有选择的情况下推进对话。")
 
-    hbox:
-        label _("方向键")
-        text _("导航界面。")
+#     hbox:
+#         label _("方向键")
+#         text _("导航界面。")
 
-    hbox:
-        label _("Esc")
-        text _("访问游戏菜单。")
+#     hbox:
+#         label _("Esc")
+#         text _("访问游戏菜单。")
 
-    hbox:
-        label _("Ctrl")
-        text _("按住时快进对话。")
+#     hbox:
+#         label _("Ctrl")
+#         text _("按住时快进对话。")
 
-    hbox:
-        label _("Tab")
-        text _("切换对话快进。")
+#     hbox:
+#         label _("Tab")
+#         text _("切换对话快进。")
 
-    hbox:
-        label _("Page Up")
-        text _("回退至先前的对话。")
+#     hbox:
+#         label _("Page Up")
+#         text _("回退至先前的对话。")
 
-    hbox:
-        label _("Page Down")
-        text _("向前至后来的对话。")
+#     hbox:
+#         label _("Page Down")
+#         text _("向前至后来的对话。")
 
-    hbox:
-        label "H"
-        text _("隐藏用户界面。")
+#     hbox:
+#         label "H"
+#         text _("隐藏用户界面。")
 
-    hbox:
-        label "S"
-        text _("截图。")
+#     hbox:
+#         label "S"
+#         text _("截图。")
 
-    hbox:
-        label "V"
-        text _("切换辅助{a=https://www.renpy.cn/doc/self_voicing.html}机器朗读{/a}。")
+#     hbox:
+#         label "V"
+#         text _("切换辅助{a=https://www.renpy.cn/doc/self_voicing.html}机器朗读{/a}。")
 
-    hbox:
-        label "Shift+A"
-        text _("打开无障碍菜单。")
-
-
-screen mouse_help():
-
-    hbox:
-        label _("左键点击")
-        text _("推进对话并激活界面。")
-
-    hbox:
-        label _("中键点击")
-        text _("隐藏用户界面。")
-
-    hbox:
-        label _("右键点击")
-        text _("访问游戏菜单。")
-
-    hbox:
-        label _("鼠标滚轮上\n点击回退操作区")
-        text _("回退至先前的对话。")
-
-    hbox:
-        label _("鼠标滚轮下")
-        text _("向前至后来的对话。")
+#     hbox:
+#         label "Shift+A"
+#         text _("打开无障碍菜单。")
 
 
-screen gamepad_help():
+# screen mouse_help():
 
-    hbox:
-        label _("右扳机键\nA/底键")
-        text _("推进对话并激活界面。")
+#     hbox:
+#         label _("左键点击")
+#         text _("推进对话并激活界面。")
 
-    hbox:
-        label _("左扳机键\n左肩键")
-        text _("回退至先前的对话。")
+#     hbox:
+#         label _("中键点击")
+#         text _("隐藏用户界面。")
 
-    hbox:
-        label _("右肩键")
-        text _("向前至后来的对话。")
+#     hbox:
+#         label _("右键点击")
+#         text _("访问游戏菜单。")
 
+#     hbox:
+#         label _("鼠标滚轮上\n点击回退操作区")
+#         text _("回退至先前的对话。")
 
-    hbox:
-        label _("十字键，摇杆")
-        text _("导航界面。")
-
-    hbox:
-        label _("开始，向导")
-        text _("访问游戏菜单。")
-
-    hbox:
-        label _("Y/顶键")
-        text _("隐藏用户界面。")
-
-    textbutton _("校准") action GamepadCalibrate()
+#     hbox:
+#         label _("鼠标滚轮下")
+#         text _("向前至后来的对话。")
 
 
-style help_button is gui_button
-style help_button_text is gui_button_text
-style help_label is gui_label
-style help_label_text is gui_label_text
-style help_text is gui_text
+# screen gamepad_help():
 
-style help_button:
-    properties gui.button_properties("help_button")
-    xmargin 12
+#     hbox:
+#         label _("右扳机键\nA/底键")
+#         text _("推进对话并激活界面。")
 
-style help_button_text:
-    properties gui.button_text_properties("help_button")
+#     hbox:
+#         label _("左扳机键\n左肩键")
+#         text _("回退至先前的对话。")
 
-style help_label:
-    xsize 375
-    right_padding 30
+#     hbox:
+#         label _("右肩键")
+#         text _("向前至后来的对话。")
 
-style help_label_text:
-    size gui.text_size
-    xalign 1.0
-    text_align 1.0
+
+#     hbox:
+#         label _("十字键，摇杆")
+#         text _("导航界面。")
+
+#     hbox:
+#         label _("开始，向导")
+#         text _("访问游戏菜单。")
+
+#     hbox:
+#         label _("Y/顶键")
+#         text _("隐藏用户界面。")
+
+#     textbutton _("校准") action GamepadCalibrate()
+
+
+# style help_button is gui_button
+# style help_button_text is gui_button_text
+# style help_label is gui_label
+# style help_label_text is gui_label_text
+# style help_text is gui_text
+
+# style help_button:
+#     properties gui.button_properties("help_button")
+#     xmargin 12
+
+# style help_button_text:
+#     properties gui.button_text_properties("help_button")
+
+# style help_label:
+#     xsize 375
+#     right_padding 30
+
+# style help_label_text:
+#     size gui.text_size
+#     xalign 1.0
+#     text_align 1.0
 
 
 
@@ -1075,10 +1033,7 @@ style help_label_text:
 
 
 ## 确认界面 ########################################################################
-##
-## 当 Ren'Py 需要询问用户有关确定或取消的问题时，会调用确认界面。
-##
-## https://www.renpy.cn/doc/screen_special.html#confirm
+
 
 screen confirm(message, yes_action, no_action):
 
