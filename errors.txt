@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/01-definitions.rpy", line 48: expected statement.
-    roofcode = Roofcode()
-             ^
+File "game/screens.rpy", line 93: 'spacing' is not a keyword argument or valid child of the frame statement.
+    spacing 20
+           ^
 
 Ren'Py Version: Ren'Py 8.1.1.23060707
-Tue Jul 11 18:34:41 2023
+Tue Jul 11 20:56:06 2023

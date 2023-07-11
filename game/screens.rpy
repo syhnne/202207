@@ -1,84 +1,152 @@
-﻿################################################################################
-## 初始化
-################################################################################
-
+﻿
 init offset = -1
-
-
-################################################################################
-## 样式
-################################################################################
-
 style default:
     properties gui.text_properties()
     language gui.language
-
 style input:
     properties gui.text_properties("input", accent=True)
     adjust_spacing False
-
 style hyperlink_text:
     properties gui.text_properties("hyperlink", accent=True)
     hover_underline True
-
 style gui_text:
     properties gui.text_properties("interface")
-
-
 style button:
     properties gui.button_properties("button")
-
 style button_text is gui_text:
     properties gui.text_properties("button")
     yalign 0.5
-
-
 style label_text is gui_text:
     properties gui.text_properties("label", accent=True)
-
 style prompt_text is gui_text:
     properties gui.text_properties("prompt")
-
-
 style bar:
     ysize gui.bar_size
     left_bar Frame("gui/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
     right_bar Frame("gui/bar/right.png", gui.bar_borders, tile=gui.bar_tile)
-
 style vbar:
     xsize gui.bar_size
     top_bar Frame("gui/bar/top.png", gui.vbar_borders, tile=gui.bar_tile)
     bottom_bar Frame("gui/bar/bottom.png", gui.vbar_borders, tile=gui.bar_tile)
-
 style scrollbar:
     ysize gui.scrollbar_size
     base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
     thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
-
 style vscrollbar:
     xsize gui.scrollbar_size
     base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
     thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
-
 style slider:
     ysize gui.slider_size
     base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
     thumb "gui/slider/horizontal_[prefix_]thumb.png"
-
 style vslider:
     xsize gui.slider_size
     base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
     thumb "gui/slider/vertical_[prefix_]thumb.png"
-
-
 style frame:
     padding gui.frame_borders.padding
     background Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ################################################################################
 ## 游戏内界面
+################################################################################
+
+## 输入密码 ########################################################################
+
+screen roof_code():
+    modal True
+    frame:
+        style_prefix 'code'
+        align (0.5, 0.5)
+        has vbox
+
+        text roofcode.refresh() xalign 0.5
+        grid 3 5:
+            
+            textbutton '1' action Function(roofcode.enter, 1)
+            textbutton '2' action Function(roofcode.enter, 2)
+            textbutton '3' action Function(roofcode.enter, 3)
+
+            textbutton '4' action Function(roofcode.enter, 4)
+            textbutton '5' action Function(roofcode.enter, 5)
+            textbutton '6' action Function(roofcode.enter, 6)
+
+            textbutton '7' action Function(roofcode.enter, 7)
+            textbutton '8' action Function(roofcode.enter, 8)
+            textbutton '9' action Function(roofcode.enter, 9)
+
+            textbutton 'Clear' action Function(roofcode.clear)
+            textbutton '0' action Function(roofcode.enter, 0)
+            textbutton 'Confirm' action Function(roofcode.confirm)
+
+            null 
+            textbutton 'Return' action Return('')
+            null
+            
+style code_button_text:
+    font gui.text_font
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+## gui界面
 ################################################################################
 
 
@@ -238,13 +306,10 @@ screen quick_menu():
             xalign 0.5
             yalign 0.96
 
-            # textbutton _("回退") action Rollback()
             textbutton _("历史") action MenuHideInterface('history')
             textbutton _("快进") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("自动") action Preference("auto-forward", "toggle")
             textbutton _("保存") action MenuHideInterface('save')
-            # textbutton _("快存") action QuickSave()
-            # textbutton _("快读") action QuickLoad()
             textbutton _("设置") action MenuHideInterface('preferences')
 
 

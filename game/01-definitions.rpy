@@ -1,6 +1,8 @@
 
 init python:
 
+    ## 这个东西是为了天台的那个门而写的，但是可以用作一切六位数的密码。
+    ## 它也告诉我一个道理：任何运算都应该打包成函数，而不是搞一个屎山label来回跳……我最好把时间表也做成这种形式的，天呐，那是多少bug要修……
     class Roofcode():
         def __init__(self, code) -> None:
             self.code = code
@@ -45,6 +47,7 @@ init python:
                     return True
                 else:
                     return False
+    ## 这是天台门口的密码
     roofcode = Roofcode(persistent.HEYWHATAREYOUDOING)
 
 
