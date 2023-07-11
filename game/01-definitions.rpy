@@ -1,6 +1,57 @@
 
 init python:
 
+    class Roofcode():
+        def __init__(self, code) -> None:
+            self.code = code
+            self.current_code = ['', '', '', '', '', '', ]
+        
+        def refresh(self):
+            x = ''
+            for c in self.current_code:
+                if c != '':
+                    x = x + str(c)
+                else:
+                    x = x + '-'
+            return x
+
+        def clear(self):
+            self.current_code = ['', '', '', '', '', '', ]
+
+        def enter(self, number):
+            current_number = 0
+            for c in self.current_code:
+                if c is '':
+                    break
+                else:
+                    current_number += 1
+                    continue
+                    
+            if current_number < len(self.current_code):
+                self.current_code[current_number] = number
+            # return self.refresh()
+        
+
+        def confirm(self):
+            if '' in self.current_code:
+                self.current_code = ['', '', '', '', '', '', ]
+                return False
+            else:
+                x = 0
+                for c in self.current_code:
+                    x = x*10 + c
+                self.current_code = ['', '', '', '', '', '', ]
+                if x==self.code:
+                    return True
+                else:
+                    return False
+    roofcode = Roofcode(persistent.HEYWHATAREYOUDOING)
+
+
+
+
+
+
     renpy.add_layer('effects', above='master', below=None, menu_clear=False)
     effects = 'effects'
 

@@ -1,48 +1,76 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
-After initialization, but before game start.
-  File "game/screens.rpy", line 202, in prepare_screen
-    screen choice(items):
-  File "game/screens.rpy", line 202, in prepare
-    screen choice(items):
-  File "game/screens.rpy", line 205, in prepare
-    vbox:
-  File "game/screens.rpy", line 205, in prepare
-    vbox:
-SyntaxError: unexpected EOF while parsing (game/screens.rpy, line 206)
+While running game code:
+  File "game/script.rpy", line 110, in script call
+    call test
+  File "game/script.rpy", line 38, in script
+    call screen roof_code
+  File "renpy/common/000statements.rpy", line 670, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "game/script.rpy", line 62, in execute
+    screen roof_code():
+  File "game/script.rpy", line 62, in execute
+    screen roof_code():
+  File "game/script.rpy", line 64, in execute
+    frame:
+  File "game/script.rpy", line 66, in execute
+    has vbox
+  File "game/script.rpy", line 68, in execute
+    grid 3 4:
+Exception: Grid overfull.
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "D:\renpy-7.4.4-sdk\renpy\bootstrap.py", line 275, in bootstrap
-    renpy.main.main()
-  File "D:\renpy-7.4.4-sdk\renpy\main.py", line 670, in main
-    run(restart)
-  File "D:\renpy-7.4.4-sdk\renpy\main.py", line 93, in run
-    renpy.display.screen.prepare_screens()
-  File "D:\renpy-7.4.4-sdk\renpy\display\screen.py", line 1003, in prepare_screens
-    s.ast.prepare_screen()
-  File "game/screens.rpy", line 202, in prepare_screen
-    screen choice(items):
-  File "game/screens.rpy", line 202, in prepare
-    screen choice(items):
-  File "game/screens.rpy", line 205, in prepare
-    vbox:
-  File "game/screens.rpy", line 205, in prepare
-    vbox:
-  File "D:\renpy-7.4.4-sdk\renpy\py3analysis.py", line 808, in ast_eval
-    return self.ast_eval_literal(expr)[0]
-  File "D:\renpy-7.4.4-sdk\renpy\py3analysis.py", line 790, in ast_eval_literal
-    expr = py_compile(expr, 'eval', ast_node=True)
-  File "D:\renpy-7.4.4-sdk\renpy\python.py", line 1088, in py_compile
-    raise e
-  File "D:\renpy-7.4.4-sdk\renpy\python.py", line 1034, in py_compile
-    raise orig_e
-  File "D:\renpy-7.4.4-sdk\renpy\python.py", line 1027, in py_compile
-    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-SyntaxError: unexpected EOF while parsing (game/screens.rpy, line 206)
+  File "game/script.rpy", line 110, in script call
+    call test
+  File "game/script.rpy", line 38, in script
+    call screen roof_code
+  File "D:\renpy-7.4.4-sdk\renpy\ast.py", line 2259, in execute
+    self.call("execute")
+  File "D:\renpy-7.4.4-sdk\renpy\ast.py", line 2241, in call
+    return renpy.statements.call(method, parsed, *args, **kwargs)
+  File "D:\renpy-7.4.4-sdk\renpy\statements.py", line 342, in call
+    return method(parsed, *args, **kwargs)
+  File "renpy/common/000statements.rpy", line 670, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "D:\renpy-7.4.4-sdk\renpy\exports.py", line 3345, in call_screen
+    rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
+  File "D:\renpy-7.4.4-sdk\renpy\ui.py", line 299, in interact
+    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
+  File "D:\renpy-7.4.4-sdk\renpy\display\core.py", line 3579, in interact
+    repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, pause_modal=pause_modal, **kwargs) # type: ignore
+  File "D:\renpy-7.4.4-sdk\renpy\display\core.py", line 4052, in interact_core
+    root_widget.visit_all(lambda d : d.per_interact())
+  File "D:\renpy-7.4.4-sdk\renpy\display\core.py", line 681, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-7.4.4-sdk\renpy\display\core.py", line 681, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-7.4.4-sdk\renpy\display\core.py", line 681, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-7.4.4-sdk\renpy\display\screen.py", line 476, in visit_all
+    callback(self)
+  File "D:\renpy-7.4.4-sdk\renpy\display\core.py", line 4052, in <lambda>
+    root_widget.visit_all(lambda d : d.per_interact())
+  File "D:\renpy-7.4.4-sdk\renpy\display\screen.py", line 487, in per_interact
+    self.update()
+  File "D:\renpy-7.4.4-sdk\renpy\display\screen.py", line 680, in update
+    self.screen.function(**self.scope)
+  File "game/script.rpy", line 62, in execute
+    screen roof_code():
+  File "game/script.rpy", line 62, in execute
+    screen roof_code():
+  File "game/script.rpy", line 64, in execute
+    frame:
+  File "game/script.rpy", line 66, in execute
+    has vbox
+  File "game/script.rpy", line 68, in execute
+    grid 3 4:
+  File "D:\renpy-7.4.4-sdk\renpy\display\layout.py", line 550, in add
+    raise Exception("Grid overfull.")
+Exception: Grid overfull.
 
 Windows-10-10.0.22621 AMD64
 Ren'Py 8.1.1.23060707
 202307 1.0
-Sun Jul  9 17:00:16 2023
+Tue Jul 11 18:27:20 2023

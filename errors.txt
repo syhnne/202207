@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/script.rpy", line 98: end of line expected.
-    show rule01 with dissolve at top
-                              ^
+File "game/01-definitions.rpy", line 48: expected statement.
+    roofcode = Roofcode()
+             ^
 
 Ren'Py Version: Ren'Py 8.1.1.23060707
-Sun Jul  9 20:53:28 2023
+Tue Jul 11 18:34:41 2023

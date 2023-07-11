@@ -82,6 +82,15 @@ style frame:
 ################################################################################
 
 
+screen developer_options():
+    tag menu
+    use game_menu('开发者选项'):
+        has vbox
+        text '天台密码：[persistent.HEYWHATAREYOUDOING]'
+        text 'persistent.playthrough = [persistent.playthrough]'
+        textbutton '清除游戏数据' action Confirm('确认重置全部游戏数据？', Function(reset_game_data))
+
+
 ## 对话界面 ########################################################################
 
 screen say(who, what):
@@ -274,6 +283,8 @@ screen navigation():
 
         textbutton _("读取游戏") action ShowMenu("load")
         textbutton _("设置") action ShowMenu("preferences")
+        if config.developer:
+            textbutton '开发者选项' action ShowMenu('developer_options')
 
         if _in_replay:
             textbutton _("结束回放") action EndReplay(confirm=True)
