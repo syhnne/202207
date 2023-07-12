@@ -1,8 +1,10 @@
 
 init python:
 
+    from functools import reduce
+
     ## 这个东西是为了天台的那个门而写的，但是可以用作一切六位数的密码。
-    ## 它也告诉我一个道理：任何运算都应该打包成函数，而不是搞一个屎山label来回跳……我最好把时间表也做成这种形式的，天呐，那是多少bug要修……
+    ## 它也告诉我一个道理：任何运算都应该打包成函数，而不是搞一个屎山label反复横跳……我最好把时间表也做成这种形式的，天呐，那是多少bug要修……
     class Roofcode():
         def __init__(self, code) -> None:
             self.code = code
@@ -23,7 +25,7 @@ init python:
         def enter(self, number):
             current_number = 0
             for c in self.current_code:
-                if c is '':
+                if c == '':
                     break
                 else:
                     current_number += 1
@@ -39,9 +41,7 @@ init python:
                 self.current_code = ['', '', '', '', '', '', ]
                 return False
             else:
-                x = 0
-                for c in self.current_code:
-                    x = x*10 + c
+                x = reduce(lambda x,y: x*10+y,  self.current_code)
                 self.current_code = ['', '', '', '', '', '', ]
                 if x==self.code:
                     return True
@@ -51,7 +51,100 @@ init python:
     roofcode = Roofcode(persistent.HEYWHATAREYOUDOING)
 
 
+    ## 家人们谁懂啊，cpu最烧的一集，从特么放学修到半夜1点。
+    
+    import random
 
+    ## 方便起见，我用整数来代表地点，这里是它对应的标签。函数的最后一步，或者直接写screen那里，得来这地方查一下地点标签叫啥
+    spotdict = {
+        1:'playground',
+        2:'building',
+        3:'cafeteria',
+    }
+
+    class CharacterEvents():
+        
+        def __init__(self, e1, e2):
+            self.e1 = e1
+            self.e2 = e2 
+
+        ## Return a tuple if available. If not, returns None.
+        def random_event(self, exclude=None):
+            if len(self.e1)+len(self.e2) <= 0:
+                return False
+            else:
+                choice = set(self.e2)
+                if len(self.e1)>0:
+                    choice.add(self.e1[0])
+
+                if exclude:
+                    choice = set(filter(lambda x: not x[1] in exclude, choice))
+                if list(choice) == []:
+                    return None
+                else:
+                    return random.choice(list(choice))
+
+        def del_event(self, event):
+            if event in self.e1:
+                self.e1.remove(event)
+            elif event in self.e2:
+                self.e2.remove(event)
+            # else:
+            #     print('bad event')
+            ## 都找不着的话就是没有，不管了
+
+
+
+    class Timetable():
+
+        def __init__(self):
+
+            self.history = []
+            self.banned = None
+            self.characters = {y,c,b}
+
+        def get_options(self):
+            if self.banned:
+                self.characters.remove(self.banned)
+
+            dict = {}
+            except_location = []
+            for chr in self.characters:
+                choice = chr.random_event(except_location)
+                if choice:
+                    dict[chr] = choice
+                    except_location.append(choice[1])
+                
+            
+                
+            if self.banned:
+                self.characters.add(self.banned)
+            return dict
+
+        def choose(self, choice, opt):
+            if not isinstance(choice, CharacterEvents):
+                raise TypeError('输入角色！！')
+            if self.banned != None:
+                self.banned = None
+            if opt == {}:
+                return 'running out of all options!'
+            elif choice in opt.keys():
+                target = opt[choice]
+                self.history.append(choice)
+                self.banned = choice
+                choice.del_event(target)
+                return target[0]
+            else:
+                return 'running out of options of your character.'
+
+
+
+    y = CharacterEvents([('y_1',1), ('y_2',3),], [('y1',1), ('y2',5), ('y3',7)])
+    c = CharacterEvents([('c_1',2), ('c_2',1),], [('c1',2), ('c2',3), ('c3',6)])
+    b = CharacterEvents([('b_1',3), ('b_2',2),], [('b1',1), ('b2',6), ('b3',3)])
+
+
+    tt = Timetable()
 
 
 

@@ -8,10 +8,10 @@ define character.b = Character("bn", dynamic=True)
 define character.c = Character("cn", dynamic=True)
 define character.y = Character("yn", dynamic=True)
 
-## 这是好感度
-default b = 0
-default c = 0
-default y = 0
+## 这是好感度。算了吧，三个字母被我拿去计算时间表了。
+# default b = 0
+# default c = 0
+# default y = 0
 
 default an = 'A'
 default bn = 'B'
