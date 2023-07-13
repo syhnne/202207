@@ -1,12 +1,12 @@
 
 init python:
 
-    from functools import reduce
+    import functools
 
     ## 这个东西是为了天台的那个门而写的，但是可以用作一切六位数的密码。
     ## 它也告诉我一个道理：任何运算都应该打包成函数，而不是搞一个屎山label反复横跳……我最好把时间表也做成这种形式的，天呐，那是多少bug要修……
     class Roofcode():
-        def __init__(self, code) -> None:
+        def __init__(self, code):
             self.code = code
             self.current_code = ['', '', '', '', '', '', ]
         
@@ -51,91 +51,65 @@ init python:
     roofcode = Roofcode(persistent.HEYWHATAREYOUDOING)
 
 
-    ## 家人们谁懂啊，cpu最烧的一集，从特么放学修到半夜1点。
-    
-    import random
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def len0(list):
+        if len(list)>0:
+            return len[0]
+        else:
+            return None
+    
+    ## 家人们谁懂啊，cpu最烧的一集，从特么放学修到半夜1点。
     ## 方便起见，我用整数来代表地点，这里是它对应的标签。函数的最后一步，或者直接写screen那里，得来这地方查一下地点标签叫啥
-    spotdict = {
-        1:'playground',
-        2:'building',
-        3:'cafeteria',
-    }
+    list_ = []
 
     class CharacterEvents():
         
         def __init__(self, e1, e2):
-            self.e1 = e1
-            self.e2 = e2 
+            self.__e1 = e1
+            self.__e2 = e2 
 
         ## Return a tuple if available. If not, returns None.
-        def random_event(self, exclude=None):
-            if len(self.e1)+len(self.e2) <= 0:
+        def random_event(self):
+            # global list_
+            list_ = []
+            if len(self.__e1)+len(self.__e2) <= 0:
                 return False
             else:
-                choice = set(self.e2)
-                if len(self.e1)>0:
-                    choice.add(self.e1[0])
-
-                if exclude:
-                    choice = set(filter(lambda x: not x[1] in exclude, choice))
-                if list(choice) == []:
-                    return None
+                list_ = self.__e2
+                if len(self.__e1)>0:
+                    if not self.__e1[0] in list_:
+                        list_.append(self.__e1[0])
+                if list_ == []:
+                    return False
                 else:
-                    return random.choice(list(choice))
-
+                    return renpy.random.choice(list_)
+    
         def del_event(self, event):
-            if event in self.e1:
-                self.e1.remove(event)
-            elif event in self.e2:
-                self.e2.remove(event)
-            # else:
-            #     print('bad event')
+            if event in self.__e1:
+                self.__e1.remove(event)
+            elif event in self.__e2:
+                self.__e2.remove(event)
+            else:
+                pass
             ## 都找不着的话就是没有，不管了
 
+        def ev(self):
+            return self.__e1 + self.__e2
 
-
-    class Timetable():
-
-        def __init__(self):
-
-            self.history = []
-            self.banned = None
-            self.characters = {y,c,b}
-
-        def get_options(self):
-            if self.banned:
-                self.characters.remove(self.banned)
-
-            dict = {}
-            except_location = []
-            for chr in self.characters:
-                choice = chr.random_event(except_location)
-                if choice:
-                    dict[chr] = choice
-                    except_location.append(choice[1])
-                
-            
-                
-            if self.banned:
-                self.characters.add(self.banned)
-            return dict
-
-        def choose(self, choice, opt):
-            if not isinstance(choice, CharacterEvents):
-                raise TypeError('输入角色！！')
-            if self.banned != None:
-                self.banned = None
-            if opt == {}:
-                return 'running out of all options!'
-            elif choice in opt.keys():
-                target = opt[choice]
-                self.history.append(choice)
-                self.banned = choice
-                choice.del_event(target)
-                return target[0]
-            else:
-                return 'running out of options of your character.'
 
 
 
@@ -144,7 +118,142 @@ init python:
     b = CharacterEvents([('b_1',3), ('b_2',2),], [('b1',1), ('b2',6), ('b3',3)])
 
 
-    tt = Timetable()
+
+
+
+
+    def e():
+        s = list_
+        q = y.ev() + c.ev() + b.ev()
+        return [s,q]
+
+
+
+
+
+
+
+
+
+
+
+    class MapEvent():
+
+        def __init__(self):
+            self.current_opt = None
+            self.spot_name = {
+                1:'操场',
+                2:'高中楼',
+                3:'食堂',
+                4:'p40',
+                5:'p50',
+                6:'p60',
+                7:'p70',
+                8:'p80',
+                9:'p90',
+            } 
+            self.spot_label = {
+                1:'playground',
+                2:'building',
+                3:'cafeteria',
+                4:'p4',
+                5:'p5',
+                6:'p6',
+                7:'p7',
+                8:'p8',
+                9:'p9',
+            }
+            self.spot_pos = {
+                1:(100,100),
+                2:(200,100),
+                3:(300,100),
+                4:(400,100),
+                5:(500,100),
+                6:(600,100),
+                7:(700,100),
+                8:(800,100),
+                9:(900,100),
+            }
+            self.spot_available = {
+                1:True,
+                2:True,
+                3:True,
+                4:True,
+                5:True,
+                6:True,
+                7:True,
+                8:True,
+                9:True,
+            }
+
+        def get_options(self):
+            opt_dict = {}
+            for chr in {y,c,b}:
+                choice = chr.random_event()
+                if choice != False:
+                    opt_dict[chr] = choice
+            if opt_dict == {}:
+                raise ValueError('你选项用完了,这倒霉催的for循环怎么他妈不干活啊，你嘛死了')
+            return opt_dict
+
+        def opt_init(self):
+            self.current_opt = None
+            self.current_opt = self.get_options()
+        
+        def show_spot(self, number):
+            name, label, pos = self.spot_name[number], self.spot_label[number], self.spot_pos[number]
+            if self.spot_available[number]:
+                ## showspot
+                if self.current_opt:
+                    for i in self.current_opt.values():
+                        if i[1] == number:
+                            label = i[0]
+                        elif i[1] >= 9:
+                            raise ValueError('Invalid location number on map.show_spot()')
+                return [name, label, pos]
+            else:
+                return None
+        
+        def action(self, tuple_):
+            if self.current_opt:
+                pass
+                ## 日你妈，是你逼我写屎山的，我本来想写的干净整洁一点，谁他妈知道这倒霉催的比玩意报了两天两夜的错
+                y.del_event(tuple_)
+                c.del_event(tuple_)
+                b.del_event(tuple_)
+            else:
+                raise ValueError('我真的服，你tm什么时候把我列表吞了')
+
+    map = MapEvent()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -234,35 +343,26 @@ label _hide_windows_mod:
 label _game_menu_mod(*args, _game_menu_screen=_game_menu_screen, **kwargs):
     if not _game_menu_screen:
         return
-
     $ renpy.play(config.enter_sound)
-
     $ _enter_menu()
     ## 下面两行我加的，试了试，只有放在这个位置能保证两次截屏顺序正确
     ## 第一次截屏发生在_enter_menu()函数里面，我猜那个是给FileScreenshot用的，结果我猜对了
     ## 第二次截屏就是下文的menuscrs，我要保证他发生在我手动隐藏interface之后
-    $ renpy.run(HideInterfaceMod())
+    ## 20230713:地图变大了，变成了viewport，只好来这里改
+    if not in_map:
+        $ renpy.run(HideInterfaceMod())
     $ menuscrs()
 
     $ renpy.transition(config.enter_transition)
-
     if renpy.has_label("enter_game_menu"):
         call expression "enter_game_menu" from _call_expression_4
-
     if config.game_menu_music:
         $ renpy.music.play(config.game_menu_music, if_changed=True)
-
     if renpy.has_label("game_menu"):
         jump expression "game_menu"
-
     if renpy.has_screen(_game_menu_screen):
-        
         $ renpy.show_screen(_game_menu_screen, *args, _transient=True, **kwargs)
-
-        
         $ ui.interact(suppress_overlay=True, suppress_window=True) ##这是关键
-        
         jump _noisy_return
-
     jump expression _game_menu_screen
 

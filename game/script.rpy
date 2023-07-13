@@ -1,5 +1,5 @@
 ﻿
-## 天台那扇门的密码。一般来说玩家不会知道他是多少，除非他们已经通关一次。在任何情况下都不要修改这个数据。
+## 天台那扇门的密码。一般来说玩家不会知道他是多少，除非他们已经通关一次还闲的没事把这个数字记了下来。
 default persistent.HEYWHATAREYOUDOING = renpy.random.randint(100000,999999)
 default persistent.playthrough = 1
 
@@ -7,11 +7,6 @@ define character.a = Character("an", dynamic=True)
 define character.b = Character("bn", dynamic=True)
 define character.c = Character("cn", dynamic=True)
 define character.y = Character("yn", dynamic=True)
-
-## 这是好感度。算了吧，三个字母被我拿去计算时间表了。
-# default b = 0
-# default c = 0
-# default y = 0
 
 default an = 'A'
 default bn = 'B'
@@ -29,7 +24,8 @@ default random_be = 1
 
 
 
-
+## 程序内部使用，不要再动了
+default in_map = False
 
 
 
@@ -54,18 +50,154 @@ label roof:
 
 
 
+screen school_map():
+    zorder 1
+    modal True
 
+    viewport:
+        draggable True
+        window:
+            xysize (3000,3000)
+            background 'gui/map/base.png'
+            for location in range(1,10):
+                $ inf = map.show_spot(location)
+                if inf:
+                    textbutton inf[0]:
+                        pos inf[2]
+                        action [  Call(str(inf[1])),  Function(map.action, (inf[1], location))  ]
+                        tooltip inf[1]
+
+
+            $ tooltip = GetTooltip()
+            frame:
+                xpos 200 ypos 200
+                if tooltip:
+                    text tooltip
+                else:
+                    text '_______'
 
 
 label main_loop:
-    '（返回主页面）'
-    jump roof
+    'open the map'
+    
+    $ map.opt_init()
+    $ in_map = True
+    call screen school_map()
+    $ in_map = False
+    '（回到主循环）'
+    jump main_loop
+    
     return
 
 
+screen map_say():
+    pass
 
 
 
+
+
+
+
+
+
+
+label y_1:
+    'y_1'
+    return
+
+label y_2:
+    'y_2'
+    return
+
+label y1:
+    'y1'
+    return
+
+label y2:
+    'y2'
+    return
+
+label y3:
+    'y3'
+    return
+
+label c_1:
+    'c_1'
+    return
+
+label c_2:
+    'c_2'
+    return
+
+label c1:
+    'c1'
+    return
+
+label c2:
+    'c2'
+    return
+
+label c3:
+    'c3'
+    return
+
+label b_1:
+    'b_1'
+    return
+
+label b_2:
+    'b_2'
+    return
+
+label b1:
+    'b1'
+    return
+
+label b2:
+    'b2'
+    return
+
+label b3:
+    'b3'
+    return
+
+
+label playground:
+    'playground'
+    return
+
+label building:
+    'building'
+    return
+
+label cafeteria:
+    'cafeteria'
+    return
+
+label p4:
+    'p4'
+    return
+
+label p5:
+    'p5'
+    return
+
+label p6:
+    'p6'
+    return
+
+label p7:
+    'p7'
+    return
+
+label p8:
+    'p8'
+    return
+
+label p9:
+    'p9'
+    return
 
 
 
@@ -83,7 +215,7 @@ label main_loop:
 label start:
 
     ## 这里最好加点旁白，来简单介绍一下玩家的身份，比如说“你是一个高二学生”之类。但我写不出来，下次一定。
-
+    jump main_loop
     
     b '哎，今天化学作业是啥？'
     pause
@@ -206,12 +338,14 @@ label start:
 
 
 
-    ## 怎么样，学会怎么求导数了吗？
+    ## 怎么样，学会导数了吗？
     ## 导数是什么？
 
-
+    # menu:
+        # '你这个年纪，怎么睡得着的？':
 
     return
+
 
 
 
