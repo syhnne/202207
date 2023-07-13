@@ -64,7 +64,7 @@ screen school_map():
                 if inf:
                     textbutton inf[0]:
                         pos inf[2]
-                        action [  Call(str(inf[1])),  Function(map.action, (inf[1], location))  ]
+                        action Function(map.action, inf)
                         tooltip inf[1]
 
 

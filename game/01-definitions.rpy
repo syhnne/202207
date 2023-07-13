@@ -63,71 +63,49 @@ init python:
 
 
 
+    import functools
+
+    def log(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kw):
+            print('call %s():' % func.__name__)
+            return func(*args, **kw)
+        return wrapper
 
 
 
-    def len0(list):
-        if len(list)>0:
-            return len[0]
-        else:
-            return None
-    
-    ## 家人们谁懂啊，cpu最烧的一集，从特么放学修到半夜1点。
-    ## 方便起见，我用整数来代表地点，这里是它对应的标签。函数的最后一步，或者直接写screen那里，得来这地方查一下地点标签叫啥
-    list_ = []
 
-    class CharacterEvents():
+    import random
+    ## 操你妈，一样的东西搬到renpy就运行不了了，你他妈运行不了倒是给我报个错告诉我问题在哪啊傻逼
+    class Chr():
         
-        def __init__(self, e1, e2):
-            self.__e1 = e1
-            self.__e2 = e2 
+        def __init__(self, *e):
+            self.__e = list(e)
 
-        ## Return a tuple if available. If not, returns None.
         def random_event(self):
-            # global list_
-            list_ = []
-            if len(self.__e1)+len(self.__e2) <= 0:
+            if len(self.__e) <= 0:
                 return False
             else:
-                list_ = self.__e2
-                if len(self.__e1)>0:
-                    if not self.__e1[0] in list_:
-                        list_.append(self.__e1[0])
-                if list_ == []:
-                    return False
-                else:
-                    return renpy.random.choice(list_)
-    
-        def del_event(self, event):
-            if event in self.__e1:
-                self.__e1.remove(event)
-            elif event in self.__e2:
-                self.__e2.remove(event)
-            else:
-                pass
-            ## 都找不着的话就是没有，不管了
+                random.shuffle(self.__e)
+                return self.__e[0]
+
+        def del_event(self):
+            
+            print('delete:--', self.__e[0])
+            del self.__e[0]
+            
+            print(self.__e)
 
         def ev(self):
-            return self.__e1 + self.__e2
+            return self.__e
 
 
-
-
-    y = CharacterEvents([('y_1',1), ('y_2',3),], [('y1',1), ('y2',5), ('y3',7)])
-    c = CharacterEvents([('c_1',2), ('c_2',1),], [('c1',2), ('c2',3), ('c3',6)])
-    b = CharacterEvents([('b_1',3), ('b_2',2),], [('b1',1), ('b2',6), ('b3',3)])
-
-
-
-
-
+    y = Chr(('y_1',1), ('y_2',3), ('y1',1), ('y2',5), ('y3',7))
+    c = Chr(('c_1',2), ('c_2',1), ('c1',2), ('c2',3), ('c3',6))
+    b = Chr(('b_1',3), ('b_2',2), ('b1',1), ('b2',6), ('b3',3))
 
     def e():
-        s = list_
-        q = y.ev() + c.ev() + b.ev()
-        return [s,q]
-
-
+        return y.ev() + c.ev() + b.ev()
 
 
 
@@ -189,9 +167,8 @@ init python:
         def get_options(self):
             opt_dict = {}
             for chr in {y,c,b}:
-                choice = chr.random_event()
-                if choice != False:
-                    opt_dict[chr] = choice
+                if chr.random_event() != False:
+                    opt_dict[chr] = chr.random_event()
             if opt_dict == {}:
                 raise ValueError('你选项用完了,这倒霉催的for循环怎么他妈不干活啊，你嘛死了')
             return opt_dict
@@ -201,31 +178,29 @@ init python:
             self.current_opt = self.get_options()
         
         def show_spot(self, number):
-            name, label, pos = self.spot_name[number], self.spot_label[number], self.spot_pos[number]
+            name, label, pos, chr = self.spot_name[number], self.spot_label[number], self.spot_pos[number], None
             if self.spot_available[number]:
                 ## showspot
                 if self.current_opt:
-                    for i in self.current_opt.values():
-                        if i[1] == number:
-                            label = i[0]
-                        elif i[1] >= 9:
+                    for k,v in self.current_opt.items():
+                        if v[1] == number:
+                            label = v[0]
+                            chr = k
+                        elif v[1] >= 9:
                             raise ValueError('Invalid location number on map.show_spot()')
-                return [name, label, pos]
+                return [name, label, pos, chr]
             else:
                 return None
-        
-        def action(self, tuple_):
-            if self.current_opt:
-                pass
-                ## 日你妈，是你逼我写屎山的，我本来想写的干净整洁一点，谁他妈知道这倒霉催的比玩意报了两天两夜的错
-                y.del_event(tuple_)
-                c.del_event(tuple_)
-                b.del_event(tuple_)
+        def action(self, l4):
+            print('on map.action():')
+            if l4[3]:
+                print('chr')
+                l4[3].del_event()
             else:
-                raise ValueError('我真的服，你tm什么时候把我列表吞了')
+                print('--')
+            renpy.call(l4[1])
 
     map = MapEvent()
-
 
 
 
