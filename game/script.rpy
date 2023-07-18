@@ -26,58 +26,18 @@ default random_be = 1
 
 ## 程序内部使用，不要再动了
 default in_map = False
+default loop_count = 0
+default out_of_events = False
 
 
 
 
-label roof:
-    a '天台的门锁着。'
-    label roof_enter_code:
-        menu:
-            '要打开门锁吗？'
-            '输入密码。':
-                call screen roof_code
-                if _return == True:
-                    jump wewillwritethislater
-                elif _return == False:
-                    a '密码好像不对。'
-                    jump roof_enter_code
-                else:
-                    jump main_loop
-            '（离开）':
-                jump main_loop
 
 
-
-
-screen school_map():
-    zorder 1
-    modal True
-
-    viewport:
-        draggable True
-        window:
-            xysize (3000,3000)
-            background 'gui/map/base.png'
-            for location in range(1,10):
-                $ inf = map.show_spot(location)
-                if inf:
-                    textbutton inf[0]:
-                        pos inf[2]
-                        action Function(map.action, inf)
-                        tooltip inf[1]
-
-
-            $ tooltip = GetTooltip()
-            frame:
-                xpos 200 ypos 200
-                if tooltip:
-                    text tooltip
-                else:
-                    text '_______'
 
 
 label main_loop:
+    $ loop_count += 1
     'open the map'
     
     $ map.opt_init()
@@ -85,128 +45,9 @@ label main_loop:
     call screen school_map()
     $ in_map = False
     '（回到主循环）'
-    jump main_loop
-    
+    if not out_of_events or loop_count <= 30:
+        jump main_loop
     return
-
-
-screen map_say():
-    pass
-
-
-
-
-
-
-
-
-
-
-label y_1:
-    'y_1'
-    return
-
-label y_2:
-    'y_2'
-    return
-
-label y1:
-    'y1'
-    return
-
-label y2:
-    'y2'
-    return
-
-label y3:
-    'y3'
-    return
-
-label c_1:
-    'c_1'
-    return
-
-label c_2:
-    'c_2'
-    return
-
-label c1:
-    'c1'
-    return
-
-label c2:
-    'c2'
-    return
-
-label c3:
-    'c3'
-    return
-
-label b_1:
-    'b_1'
-    return
-
-label b_2:
-    'b_2'
-    return
-
-label b1:
-    'b1'
-    return
-
-label b2:
-    'b2'
-    return
-
-label b3:
-    'b3'
-    return
-
-
-label playground:
-    'playground'
-    return
-
-label building:
-    'building'
-    return
-
-label cafeteria:
-    'cafeteria'
-    return
-
-label p4:
-    'p4'
-    return
-
-label p5:
-    'p5'
-    return
-
-label p6:
-    'p6'
-    return
-
-label p7:
-    'p7'
-    return
-
-label p8:
-    'p8'
-    return
-
-label p9:
-    'p9'
-    return
-
-
-
-
-
-
-
-
-
 
 
 
@@ -215,7 +56,6 @@ label p9:
 label start:
 
     ## 这里最好加点旁白，来简单介绍一下玩家的身份，比如说“你是一个高二学生”之类。但我写不出来，下次一定。
-    jump main_loop
     
     b '哎，今天化学作业是啥？'
     pause
@@ -327,14 +167,12 @@ label start:
     '（手表上显示7:28。）'
     a '坏了，要早读了，快跑。'
     b '哎，我特么饭没吃完呢……'
-    a '{alpha=*0.5}*边跑边说*{/alpha}不好意思啊，今天运气不太好，要是真碰见鬼，咱们都不用操心这个。'
+
 
 
 
 
     
-
-    ## 第二天：b：没什么东西就赶紧走吧，别一会被班主任制裁了。你不动脑子想想，学校还能闹鬼？哪里有这种好事？
 
 
 
@@ -343,6 +181,12 @@ label start:
 
     # menu:
         # '你这个年纪，怎么睡得着的？':
+    
+    call main_loop
+
+    if loop_count > 30:
+        jump normal_ending
+    
 
     return
 
@@ -371,18 +215,6 @@ label weekend:
 
 
 
-label wewillwritethislater:
-    '到达世界最高城，理塘！太美丽了理塘'
-    '好吧这只是一个程序测试内容，现在我们回到游戏开头'
+label normal_ending:
+    'normal'
     return
-
-
-
-
-    # menu:
-    #     '咳咳，测试一下字数上限'
-    #     '（适当的沉默）':
-    #         pass
-    #     '……艺考一般12月就结束了。':
-    #         pass
-    ## 好好好，很有感觉！！！（

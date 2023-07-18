@@ -76,7 +76,7 @@ init python:
 
 
     import random
-    ## 操你妈，一样的东西搬到renpy就运行不了了，你他妈运行不了倒是给我报个错告诉我问题在哪啊傻逼
+
     class Chr():
         
         def __init__(self, *e):
@@ -96,6 +96,13 @@ init python:
             
             print(self.__e)
 
+        def add_event(self, ev):
+            if isinstance(ev, tuple):
+                self.__e.append(ev)
+            else:
+                raise TypeError('bad event on add_event()')
+
+
         def ev(self):
             return self.__e
 
@@ -104,6 +111,9 @@ init python:
     c = Chr(('c_1',2), ('c_2',1), ('c1',2), ('c2',3), ('c3',6))
     b = Chr(('b_1',3), ('b_2',2), ('b1',1), ('b2',6), ('b3',3))
 
+    ## 他吗的。我是傻逼，要给事件按顺序排，我在y_1那里加个append函数把_2加进列表里不就完事了吗？？？
+    ## 这比我写的那个傻逼方法好多了，想加事件随时都能加，我……唉……
+    
     def e():
         return y.ev() + c.ev() + b.ev()
 
@@ -165,12 +175,13 @@ init python:
             }
 
         def get_options(self):
+            global out_of_events
             opt_dict = {}
             for chr in {y,c,b}:
                 if chr.random_event() != False:
                     opt_dict[chr] = chr.random_event()
             if opt_dict == {}:
-                raise ValueError('你选项用完了,这倒霉催的for循环怎么他妈不干活啊，你嘛死了')
+                out_of_events= True
             return opt_dict
 
         def opt_init(self):
@@ -181,7 +192,7 @@ init python:
             name, label, pos, chr = self.spot_name[number], self.spot_label[number], self.spot_pos[number], None
             if self.spot_available[number]:
                 ## showspot
-                if self.current_opt:
+                if self.current_opt and self.current_opt != {}:
                     for k,v in self.current_opt.items():
                         if v[1] == number:
                             label = v[0]
