@@ -130,7 +130,7 @@ style code_button_text:
 
 screen school_map():
     zorder 1
-    modal True
+    # modal True
 
     viewport:
         draggable True
@@ -155,8 +155,35 @@ screen school_map():
                     text '_______'
 
 
-screen map_say():
-    pass
+screen library_map():
+    zorder 1
+
+    viewport:
+        draggable True
+        window:
+            xysize (3000,3000)
+            background 'gui/map/base.png'
+            has vbox       
+            textbutton 'library_1_1' action Call('lib_1_1')
+            textbutton '结束调查' action Call('lib_1_end')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -192,7 +219,8 @@ screen developer_options():
 
 screen say(who, what):
     style_prefix "say"
-
+    modal True
+    key 'dismiss' action Return()
     window:
         id "window"
 
@@ -204,6 +232,12 @@ screen say(who, what):
                 text who id "who"
 
         text what id "what"
+
+        ## 复杂的操作（指在地图界面上推进对话），往往只需要简单的办法
+        button:
+            xalign 0.5 ypos 0 xysize (1400,1400)
+            action Return()
+
 
 
     ## 如果有对话框头像，会将其显示在文本之上。请不要在手机界面下显示这个，因为没有空间。
@@ -286,6 +320,7 @@ style input:
 ## 选择界面 ########################################################################
 
 screen choice(items):
+    modal True
     style_prefix "choice"
 #775-86*len(items)-(len(items)-1)*gui.choice_spacing
     vbox:

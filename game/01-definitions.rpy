@@ -1,6 +1,11 @@
 
 init python:
 
+
+
+    renpy.add_layer('map', above='master', menu_clear=False)
+
+
     import functools
 
     ## 这个东西是为了天台的那个门而写的，但是可以用作一切六位数的密码。
@@ -246,8 +251,8 @@ init python:
     renpy.add_layer('effects', above='master', below=None, menu_clear=False)
     effects = 'effects'
 
-    ## 感谢ddlc，我直接对代码进行一个照搬。
-    nonunicode = "¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž"
+    ## 精心筛选了这个字体能显示出来的东西（
+    nonunicode = '¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿŃńŌōŎŏŐő'
     erererer = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     def glitchtext(length):
         output = ""
