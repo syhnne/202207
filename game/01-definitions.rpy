@@ -1,4 +1,110 @@
 
+init offset = -2
+
+
+
+python early:
+
+    import re
+
+    ## 精心筛选了这个字体能显示出来的东西（
+    nonunicode = '¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿŃńŌōŎŏŐő'
+    erererer = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+    def glitchtext(length):
+        if not isinstance(length, int):
+            raise TypeError('glitchtext要输入int，你是不是想写_p')
+        output = ""
+        for x in range(length):
+            output += renpy.random.choice(nonunicode+erererer)
+        return output
+    gtext_mainmenu = glitchtext(12)
+
+    ## 输入字符串！！！
+    def glitchtext_p(origin):
+        output = ''
+        if not isinstance(origin, str):
+            return ''
+        for x in origin:
+            if x in '，。？！…（）：“”':
+                output += x
+            else:
+                output += renpy.random.choice(nonunicode+erererer)
+        return output
+
+
+    say_glitch = False
+
+    def parse_say_glitch(lexer):
+        # normal = lexer.renpy_statement()
+        who = lexer.simple_expression()
+        what = lexer.rest()
+        return (who, what)
+
+    ## 一整个无语住了，首先这东西不会识别旁白，会把旁白当成角色名；其次，他妈的为什么到了label里面就不管用了啊！！！
+    ## 别让我去扒renpy源代码……我扒了，没看懂
+    ## parser.py line 987
+    def execute_say_glitch(say_obj):
+        global say_glitch
+        who, what = say_obj
+        what = what[1:-1]
+        print(who,what)
+        renpy_statement = str(who)+str(what)
+        if say_glitch:
+            renpy.say(eval(who), glitchtext_p(what))
+        else:
+            renpy.say(eval(who), what)
+
+
+    def lint_say_glitch(say_obj):
+        who, what = say_obj
+        try:
+            eval(who)
+        except Exception:
+            renpy.error("角色对象未定义: {}".format(who))
+
+        tte = renpy.check_text_tags(what)
+        if tte:
+            renpy.error(tte)
+
+    renpy.register_statement(
+        name='',
+        parse=parse_say_glitch,
+        execute=execute_say_glitch,
+        lint=lint_say_glitch,
+    )
+
+
+    def parse_random(lexer):
+        subblock_lexer = lexer.subblock_lexer()
+        choices = []
+
+        while subblock_lexer.advance():
+            with subblock_lexer.catch_error():
+                statement = subblock_lexer.renpy_statement()
+                choices.append(statement)
+
+        return choices
+
+
+    def next_random(choices):
+        return renpy.random.choice(choices)
+
+
+    def lint_random(parsed_object):
+        for i in parsed_object:
+            renpy.check_text_tags(i.what)
+
+
+    renpy.register_statement(
+        name="random",
+        block=True,
+        parse=parse_random,
+        next=next_random,
+        lint=lint_random,
+    )
+
+
+
 init python:
 
 
@@ -112,15 +218,15 @@ init python:
             return self.__e
 
 
-    y = Chr(('y_1',1), ('y_2',3), ('y1',1), ('y2',5), ('y3',7))
-    c = Chr(('c_1',2), ('c_2',1), ('c1',2), ('c2',3), ('c3',6))
-    b = Chr(('b_1',3), ('b_2',2), ('b1',1), ('b2',6), ('b3',3))
+    yc = Chr(('y_1',1), ('y_2',3), ('y1',1), ('y2',5), ('y3',7))
+    cc = Chr(('c_1',2), ('c_2',1), ('c1',2), ('c2',3), ('c3',6))
+    bc = Chr(('b_1',3), ('b_2',2), ('b1',1), ('b2',6), ('b3',3))
 
     ## 他吗的。我是傻逼，要给事件按顺序排，我在y_1那里加个append函数把_2加进列表里不就完事了吗？？？
     ## 这比我写的那个傻逼方法好多了，想加事件随时都能加，我……唉……
     
     def e():
-        return y.ev() + c.ev() + b.ev()
+        return yc.ev() + cc.ev() + bc.ev()
 
 
 
@@ -182,7 +288,7 @@ init python:
         def get_options(self):
             global out_of_events
             opt_dict = {}
-            for chr in {y,c,b}:
+            for chr in {yc,cc,bc}:
                 if chr.random_event() != False:
                     opt_dict[chr] = chr.random_event()
             if opt_dict == {}:
@@ -251,15 +357,7 @@ init python:
     renpy.add_layer('effects', above='master', below=None, menu_clear=False)
     effects = 'effects'
 
-    ## 精心筛选了这个字体能显示出来的东西（
-    nonunicode = '¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿŃńŌōŎŏŐő'
-    erererer = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-    def glitchtext(length):
-        output = ""
-        for x in range(length):
-            output += renpy.random.choice(nonunicode+erererer)
-        return output
-    gtext_mainmenu = glitchtext(12)
+    
         
     ## 需要在文件保存界面读取的内容。文档里抄的，不知道为啥能跑：https://www.renpy.cn/doc/config.html#var-config.save_json_callbacks
     def jsoncallback(d):

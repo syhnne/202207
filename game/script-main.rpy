@@ -1,37 +1,123 @@
 
 
 
+####################################################
+## library #########################################
+####################################################
 
-
-
-label libr_loop_main:
+label libr_loop_main(phase):
     '调查图书馆'
     $ in_map = True
-    show screen library_map with dissolve onlayer map
+    show screen expression 'libr_map_'+str(phase) with dissolve onlayer map
     label libr_loop:
         scene black
         pause
         $ allow_skipping = False
-        $ print('libr_loop', renpy.call_stack_depth())
         if not temp1:
             jump libr_loop
     ## 这里还可以接着说话
-    hide screen library_map with dissolve onlayer map
+    hide screen expression 'libr_map_'+str(phase) with dissolve onlayer map
     $ in_map = False
     $ temp1 = None
     return
 
+
+
+
+
+## libr_1 #########################################
+
+## 为什么会有map写在这？因为这个map属于只是往里面填东西的纯体力劳动，而且每个地点得跟一个label对应，
+## 为了避免写的时候来回翻文件，消耗我的注意力，干脆放在一起
+## 请务必遵循命名规范，至少最后一个字得是数字
+screen libr_map_1():
+    use libr_map_base:
+        has vbox
+        textbutton 'libr_1_1' action Call('libr_1_1')
+        textbutton '结束调查' action Call('libr_1_end')
+
+
+default libr_1_1_ = False
 label libr_1_1:
     '调查内容'
-    '要是能在这里加一个锁之类的东西，禁止推进地图界面就好了。。'
-    '这真是一种朴素但有效的方法，用scene black来隐藏对话框。。'
+    if not libr_1_1_:
+        '你第一次读这个label'
+    else:
+        '你第2次或更多次读了这个label'
+    '真不好意思，要在这里写屎山代码了，但我想不到别的办法来判断玩家是否看过这个label'
+    'renpy唯一给的函数就是那个read，但是它判断的不是这个存档，而是tmd全局'
+    '判断玩家在该存档是否读过一个label的函数，renpy难道没有吗？还是说让我给每个label都手动写一个变量才是设计者的本意？？'
+    $ libr_1_1_ = True
     return
+
+
+
 
 label libr_1_end:
     '现有的东西都调查完了。'
-    $ print('libr_1_end', renpy.call_stack_depth())
     $ temp1 = True
     return
+
+
+
+## libr_2 #########################################
+
+screen libr_map_2():
+    use libr_map_base:
+        has vbox
+        textbutton 'libr_2_1' action Call('libr_2_1')
+        textbutton '结束调查' action Call('libr_2_end')
+
+
+default libr_2_1_ = 1
+label libr_2_1:
+    '第二次来图书馆'
+    '你第[libr_2_1_]次点开这个东西'
+    $ libr_2_1_ += 1
+    return
+
+label libr_2_end:
+    '现有的东西都调查完了。'
+    $ temp1 = True
+    return
+
+
+
+
+
+## main #########################################
+
+label main_loop:
+    $ loop_count += 1
+    '打开地图'
+    
+    $ map.opt_init()
+    $ in_map = True
+    call screen school_map()
+    $ in_map = False
+    '（回到主循环）'
+    if not out_of_events or loop_count <= 30:
+        jump main_loop
+    return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -301,8 +387,43 @@ label temporary2:
 
 
 
+## 写这种既无聊又毫无用途的片段真的有意义吗……
+## 算了，就当是测试程序用的材料吧
+label temporary3:
+    a '所以，你为什么要穿一个黑t恤？'
+    # a '（只是以防万一……很多怪谈里面穿黑衣服的还细分为正邪两派，不知道这人什么成分。）'
+    a '（其实一次就算了，他每回出场都穿着这个黑t恤，他们老师不管的吗？）'
+    y '因为第一次来酒店的时候忘带校服t恤了。'
+    a '这都能忘的吗……'
+    y '没办法，当时走得比较着急。'
+    a '这……好家伙，那校服外套也只带了一件？你不回家取的吗？'
+    y '对，懒得去。'
+    a '所以从你搬到酒店以来，就从来没洗过衣服……？'
+    y '我确实只有这一件衣服，但是我会洗。'
+    y '很简单，衣服没干的话就别来学校，这样就不用穿校服了。'
+    a '？？？'
+    a '呃，看来高三生活并没有想象中那么辛苦啊。'
+    y '你最好别这么觉得……高三每天上课到5点，并且留的作业基本都不是一个晚上能写完的。'
+    y '而且每周六还要额外补课，周六也是晚上5点放，一般的高三生没时间到处乱跑。'
+    y '但我不是一般的高三生，因为我根本不写作业。'
+    a '这样考试不会寄吗……'
+    y '不会，我写不写作业都考一样的分。'
+    y '其实上课听讲也差不多，反正到了高三都是复习，不听课一样会做……'
+    menu:
+        '可惜我没有允许我不上学的家长。':
+            a '真羡慕你们这种家长不管的……我只要病得不是特别厉害，都得来学校。'
+            y '……'
+        '别凡尔赛了……':
+            a '（呃……真想给他一拳。）'
+            a '……'
+            a '你知道吗？我今天救了个人！'
+            y '什么人？'
+            a '就在刚才，我制止了自己把拳头打在你的脸上……'
+    y '其实还有一个原因，校服t恤的领子工艺太差，总觉得它扎脖子，所以没必要的话就不穿了。'
+    a '……突然感觉自己的脖子开始痒了。'
+    return
 
-
+    
 
 
 

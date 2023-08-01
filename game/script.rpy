@@ -1,12 +1,14 @@
 ﻿
-## 天台那扇门的密码。一般来说玩家不会知道他是多少，除非他们已经通关一次还闲的没事把这个数字记了下来。
+## 天台那扇门的密码。一般来说玩家不会知道他是多少
 default persistent.HEYWHATAREYOUDOING = renpy.random.randint(100000,999999)
 default persistent.playthrough = 1
 
-define character.a = Character("an", dynamic=True)
-define character.b = Character("bn", dynamic=True)
-define character.c = Character("cn", dynamic=True)
-define character.y = Character("yn", dynamic=True)
+define a = Character("an", dynamic=True)
+define b = Character("bn", dynamic=True)
+define c = Character("cn", dynamic=True)
+define y = Character("yn", dynamic=True)
+define e = Character("艾琳")
+## 妈的，这种前面带character.的用法竟然和cds冲突。。
 
 default an = 'A'
 default bn = 'B'
@@ -21,6 +23,9 @@ default yn = 'Y'
 ## 决定结局的是一个随机数，但玩家可以修改这个随机数的权重。这个数字是权重占比，意为初始权重1:1
 default random_he = 1
 default random_be = 1
+
+## 字面意思，就是san值，小于等于4的时候会看到乱码，目前正在尝试攻克显示乱码的核心技术
+default san = 10
 
 
 
@@ -37,18 +42,6 @@ default temp1 = None ## 调查界面退出flag
 
 
 
-label main_loop:
-    $ loop_count += 1
-    'open the map'
-    
-    $ map.opt_init()
-    $ in_map = True
-    call screen school_map()
-    $ in_map = False
-    '（回到主循环）'
-    if not out_of_events or loop_count <= 30:
-        jump main_loop
-    return
 
 
 
@@ -71,11 +64,7 @@ label main_loop:
 
 
 
-## 在开始写剧本之前，我需要先明确自己的信仰，牢记初心和使命
-## 那就是，
-## 我根本就不是来写怪谈吓人的
-## 我，是来发刀的！！！
-## 参考：https://www.bilibili.com/video/BV1yT411Z77x
+## 喜报：重开了，全都重开了，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈（失智
 
 
 
@@ -98,11 +87,30 @@ label start:
     # $ scope_memory = {}
     # $ renpy.call_replay('test_memory', scope=scope_memory)
 
+    '算了，去他的地图，先试试乱码cds！'
+    $ say_glitch = True
+    a '好，试试别的角色'
+    a '真难绷！！为什么他不认label啊！！！！！焯！！！！！！！！！'
+    a '哼哼啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊，不响丸辣，鬼知道这比东西不认label那我修了这么半天努力的意义何在'
+    $ say_glitch = False
+    a '好了，看看他正常没有'
+    a '其实这东西也就只能写一乐了，一个不支持label的语句是没有未来的，修了旁白显示为角色名称的bug也无济于事'
+    a '明天再想想怎么解决吧。我真不想直面renpy内部代码，但是它在逼我这么做'
+
+    call temporary3
+    '……'
     '测试一下说话的时候能不能放地图'
-    call libr_loop_main
-    '下一步就该测试怎么把角色说的话改成乱码了'
+    call libr_loop_main(1)
+
+    '好了，再调查一次图书馆'
+    call libr_loop_main(2)
+    '哟西！！'
+    '下一个写联合地图，这下真成九转label了，不写几个print都不知道自己人在哪'
+
+    '再下一步就该测试怎么把角色说的话改成乱码了'
     '最好是通过变量控制，而不是我直接在这里头写乱码，那样以后搞起来比较方便，省得我分类讨论。。'
     '但是好像很难搞的样子'
+
 
 
 

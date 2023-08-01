@@ -125,6 +125,23 @@ define config.has_quicksave = False
 define config.has_autosave = False
 define config.save_json_callbacks = [ ]
 # define config.narrator_menu = False
+define config.log_gl_shaders = True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## 基础 ##########################################################################
 
