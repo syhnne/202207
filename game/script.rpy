@@ -10,10 +10,10 @@ define y = Character("yn", dynamic=True)
 define e = Character("艾琳")
 ## 妈的，这种前面带character.的用法竟然和cds冲突。。
 
-default an = 'A'
-default bn = 'B'
-default cn = 'C'
-default yn = 'Y'
+default an = 'a'
+default bn = 'b'
+default cn = 'c'
+default yn = 'y'
 ## 啊这，半次元？
 
 
@@ -71,15 +71,12 @@ default temp1 = None ## 调查界面退出flag
 
 
 
-label splash:
-    return
 
 
 
 
-
-
-
+## 还有一个问题。。之前为了防止玩家推进对话的时候点击地图，我把对话框设为modal了，但是那样就没法快进。。
+## 为了快进，只能去掉modal，但是这样一来地图会在玩家点击屏幕的时候乱跑
 
 
 label start:
@@ -90,14 +87,17 @@ label start:
     '算了，去他的地图，先试试乱码cds！'
     $ say_glitch = True
     a '好，试试别的角色'
-    a '真难绷！！为什么他不认label啊！！！！！焯！！！！！！！！！'
-    a '哼哼啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊，不响丸辣，鬼知道这比东西不认label那我修了这么半天努力的意义何在'
+    a '真难绷！！为什么他不认label啊！！！！！厚礼蟹！！！！！！！！！'
+    '哼哼啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊，不响丸辣，鬼知道这比东西不认label那我修了这么半天努力的意义何在'
     $ say_glitch = False
     a '好了，看看他正常没有'
-    a '其实这东西也就只能写一乐了，一个不支持label的语句是没有未来的，修了旁白显示为角色名称的bug也无济于事'
-    a '明天再想想怎么解决吧。我真不想直面renpy内部代码，但是它在逼我这么做'
+    '太好了，这种方法是可行的，但glitchtext这个函数给的乱码效果不是特别好'
+    '最好的办法是乱码处用utf-8保存，用ansi打开，那样的乱码看起来更乱码'
+    '但那样的话我就不能用现在这个字体了。要不我还是去用正常字体吧（？'
 
-    call temporary3
+
+    $ say_glitch = False
+    call temporary4
     '……'
     '测试一下说话的时候能不能放地图'
     call libr_loop_main(1)
@@ -106,10 +106,6 @@ label start:
     call libr_loop_main(2)
     '哟西！！'
     '下一个写联合地图，这下真成九转label了，不写几个print都不知道自己人在哪'
-
-    '再下一步就该测试怎么把角色说的话改成乱码了'
-    '最好是通过变量控制，而不是我直接在这里头写乱码，那样以后搞起来比较方便，省得我分类讨论。。'
-    '但是好像很难搞的样子'
 
 
 
@@ -302,8 +298,6 @@ label main_1:
 
 
 
-    ## 怎么样，学会导数了吗？
-    ## 导数是什么？
 
     # menu:
         # '你这个年纪，你怎么睡得着的？':

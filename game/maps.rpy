@@ -38,9 +38,6 @@ screen libr_map_base():
         window:
             xysize (3000,3000)
             background 'gui/map/base.png'
-            
             transclude
-            # has vbox  
-            # textbutton 'library_1_1' action Call('libr_1_1')
-            # textbutton '结束调查' action Call('libr_1_end')
+
 

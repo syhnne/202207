@@ -179,7 +179,7 @@ screen developer_options():
 
 screen say(who, what):
     style_prefix "say"
-    modal True
+    
     key 'dismiss' action Return()
     window:
         id "window"
@@ -282,7 +282,6 @@ style input:
 screen choice(items):
     modal True
     style_prefix "choice"
-#775-86*len(items)-(len(items)-1)*gui.choice_spacing
     vbox:
         ypos 780-len(items)*43-len(items)*gui.choice_spacing+gui.choice_spacing
         for i in items:
@@ -448,12 +447,6 @@ style main_menu_version:
 
 
 ## 游戏菜单界面 ######################################################################
-##
-## 此界面列出了游戏菜单的基本共同结构。可使用界面标题调用，并显示背景、标题和导
-## 航菜单。
-##
-## scroll 参数可以是 None，也可以是 viewport 或 vpgrid。当此界面与一个或多个子界
-## 面同时使用时，这些子界面将被嵌入（放置）在其中。
 
 default menuscrsdata = None
 
@@ -590,7 +583,6 @@ screen about():
             label "[config.name!t]"
             text _("版本 [config.version!t]\n")
 
-            ## gui.about 通常在 options.rpy 中设置。
             if gui.about:
                 text "[gui.about!t]\n"
 
@@ -880,11 +872,6 @@ style slider_vbox:
 
 
 ## 历史界面 ########################################################################
-##
-## 这是一个向用户显示对话历史的界面。虽然此界面没有什么特别之处，但它必须访问储
-## 存在 _history_list 中的对话历史记录。
-##
-## https://www.renpy.cn/doc/history.html
 
 screen history():
 
@@ -1028,10 +1015,6 @@ style confirm_button_text:
 
 
 ## 快进指示界面 ######################################################################
-##
-## skip_indicator 界面用于指示快进正在进行中。
-##
-## https://www.renpy.cn/doc/screen_special.html#skip-indicator
 
 screen skip_indicator():
 
@@ -1082,10 +1065,6 @@ style skip_triangle:
 
 
 ## 通知界面 ########################################################################
-##
-## 通知界面用于向用户显示消息。（例如，当游戏快速保存或进行截屏时。）
-##
-## https://www.renpy.cn/doc/screen_special.html#notify-screen
 
 screen notify(message):
 
@@ -1120,10 +1099,6 @@ style notify_text:
 
 
 ## NVL 模式界面 ####################################################################
-##
-## 此界面用于 NVL 模式的对话和菜单。
-##
-## https://www.renpy.cn/doc/screen_special.html#nvl
 
 
 screen nvl(dialogue, items=None):
@@ -1245,8 +1220,6 @@ style pref_vbox:
     variant "medium"
     xsize 675
 
-## 由于可能没有鼠标，我们将快捷菜单替换为一个使用更少、更大按钮的版本，这样更容
-## 易触摸。
 screen quick_menu():
     variant "touch"
 

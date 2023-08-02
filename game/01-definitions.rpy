@@ -32,76 +32,81 @@ python early:
         return output
 
 
+
+
+
+    ## 实时文字乱码
+
     say_glitch = False
 
-    def parse_say_glitch(lexer):
-        # normal = lexer.renpy_statement()
-        who = lexer.simple_expression()
-        what = lexer.rest()
-        return (who, what)
-
-    ## 一整个无语住了，首先这东西不会识别旁白，会把旁白当成角色名；其次，他妈的为什么到了label里面就不管用了啊！！！
-    ## 别让我去扒renpy源代码……我扒了，没看懂
-    ## parser.py line 987
+    ## 感谢大自然的馈赠：parser.py line 1537
+    def parse_say_glitch(l):
+        state = l.checkpoint()
+        # Try for a single-argument say statement.
+        what = l.triple_string() or l.string()
+        if l.eol():
+            l.expect_noblock('say statement')
+            l.advance()
+            # print('who:', '', 'what:', what)
+            return ('', what)
+        l.revert(state)
+        # Try for a two-argument say statement.
+        who = l.say_expression()
+        what = l.triple_string() or l.string()
+        if (who is not None) and (what is not None):
+            l.expect_eol()
+            l.expect_noblock('say statement')
+            l.advance()
+            return (who, what)
+        # This reports a parse error for any bad statement.
+        l.error('expected statement--01-definitions.rpy')
+  
+    
     def execute_say_glitch(say_obj):
         global say_glitch
         who, what = say_obj
-        what = what[1:-1]
-        print(who,what)
-        renpy_statement = str(who)+str(what)
+        if who != '':
+            who = str(eval(who))
+        print('【who】', who, '【what】', what)
         if say_glitch:
-            renpy.say(eval(who), glitchtext_p(what))
+            renpy.say(who, glitchtext_p(what))
         else:
-            renpy.say(eval(who), what)
-
-
-    def lint_say_glitch(say_obj):
-        who, what = say_obj
-        try:
-            eval(who)
-        except Exception:
-            renpy.error("角色对象未定义: {}".format(who))
-
-        tte = renpy.check_text_tags(what)
-        if tte:
-            renpy.error(tte)
+            renpy.say(who, what)
 
     renpy.register_statement(
         name='',
         parse=parse_say_glitch,
         execute=execute_say_glitch,
-        lint=lint_say_glitch,
     )
 
-
-    def parse_random(lexer):
-        subblock_lexer = lexer.subblock_lexer()
-        choices = []
-
-        while subblock_lexer.advance():
-            with subblock_lexer.catch_error():
-                statement = subblock_lexer.renpy_statement()
-                choices.append(statement)
-
-        return choices
-
-
-    def next_random(choices):
-        return renpy.random.choice(choices)
-
-
-    def lint_random(parsed_object):
-        for i in parsed_object:
-            renpy.check_text_tags(i.what)
-
-
+    ## 语句前面加入ng，表示这句话在任何情况下都显示为原文字
+    def execute_nonglitch(say_obj):
+        who, what = say_obj
+        if who != '':
+            who = str(eval(who))
+        renpy.say(who, what)
+    
     renpy.register_statement(
-        name="random",
-        block=True,
-        parse=parse_random,
-        next=next_random,
-        lint=lint_random,
+        name='ng',
+        parse=parse_say_glitch,
+        execute=execute_nonglitch,
     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
