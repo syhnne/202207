@@ -5,16 +5,16 @@
 ## library #########################################
 ####################################################
 
-label libr_loop_main(phase):
+label libr_loop(phase):
     '调查图书馆'
     $ in_map = True
     show screen expression 'libr_map_'+str(phase) with dissolve onlayer map
-    label libr_loop:
+    label .loop:
         scene black
         pause
         $ allow_skipping = False
         if not temp1:
-            jump libr_loop
+            jump .loop
     ## 这里还可以接着说话
     hide screen expression 'libr_map_'+str(phase) with dissolve onlayer map
     $ in_map = False

@@ -83,29 +83,17 @@ label start:
 
     # $ scope_memory = {}
     # $ renpy.call_replay('test_memory', scope=scope_memory)
-
-    '算了，去他的地图，先试试乱码cds！'
+    # "见到你真好！ {noalt}<3{/noalt}{alt}heart{/alt}"
     $ say_glitch = True
-    a '好，试试别的角色'
-    a '真难绷！！为什么他不认label啊！！！！！厚礼蟹！！！！！！！！！'
-    '哼哼啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊，不响丸辣，鬼知道这比东西不认label那我修了这么半天努力的意义何在'
-    $ say_glitch = False
-    a '好了，看看他正常没有'
-    '太好了，这种方法是可行的，但glitchtext这个函数给的乱码效果不是特别好'
-    '最好的办法是乱码处用utf-8保存，用ansi打开，那样的乱码看起来更乱码'
-    '但那样的话我就不能用现在这个字体了。要不我还是去用正常字体吧（？'
+    'thkhkjk{nw}1111111111111111111'
+    ## woc 真绷不住了 文本标签都用不了 还是拉倒吧
+    ## 记录一下，这东西估计有用：$ upper_string = renpy.transform_text("{b}Not Upper{/b}", upper)
 
 
     $ say_glitch = False
-    call temporary4
-    '……'
-    '测试一下说话的时候能不能放地图'
-    call libr_loop_main(1)
-
-    '好了，再调查一次图书馆'
-    call libr_loop_main(2)
-    '哟西！！'
-    '下一个写联合地图，这下真成九转label了，不写几个print都不知道自己人在哪'
+    '测试大地图'
+    '有一种不知道自己在哪干什么的美'
+    call main_loop
 
 
 
