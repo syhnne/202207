@@ -1,5 +1,5 @@
 
-screen main_map():
+screen base_map(map):
     zorder 1
     # modal True
 
@@ -8,23 +8,20 @@ screen main_map():
         window:
             xysize (3000,3000)
             background 'gui/map/base.png'
-            for location in range(1,10):
-                $ inf = map.show_spot(location)
-                if inf:
-                    textbutton inf[0]:
-                        pos inf[2]
-                        action Function(map.action, inf)
-                        tooltip inf[1]
+            for loc in map.locations:
+                if loc.cond():
+                    textbutton loc.name() pos loc.pos() action Function(loc.action, )
+            if map != base_:
+                textbutton '返回' action Return()
 
 
-            $ tooltip = GetTooltip()
-            frame:
-                xpos 200 ypos 200
-                if tooltip:
-                    text tooltip
-                else:
-                    text '_______'
-
+            # $ tooltip = GetTooltip()
+            # frame:
+            #     xpos 200 ypos 200
+            #     if tooltip:
+            #         text tooltip
+            #     else:
+            #         text '_______'
 
 
 
