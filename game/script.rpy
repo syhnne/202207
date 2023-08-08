@@ -27,6 +27,8 @@ default random_be = 1
 ## 字面意思，就是san值，小于等于4的时候会看到乱码，目前正在尝试攻克显示乱码的核心技术
 default san = 10
 
+default time = 0
+
 
 
 ## 程序内部使用，不要再动了

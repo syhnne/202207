@@ -1,6 +1,7 @@
 
 screen school_map():
     zorder 1
+    tag map
     # modal True
 
     viewport:
@@ -25,6 +26,21 @@ screen school_map():
                 else:
                     text '_______'
 
+
+
+
+screen building_map():
+    zorder 1
+    tag map
+
+    viewport:
+        draggable True
+        window:
+            xysize (3000,3000)
+            background 'gui/map/base.png'
+            has vbox
+            textbutton '返回' action Return(1)
+            textbutton 'building_1' action Return('building_1')
 
 
 

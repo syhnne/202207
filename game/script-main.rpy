@@ -1,33 +1,67 @@
 
+screen watch():
+    zorder 300
+    style_prefix 'developer'
+    text str(loop_count) xalign 0.5
+
+init python:
+    config.overlay_screens.append('watch')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## main #########################################
 
 label main_loop:
+
     $ loop_count += 1
-    '打开地图'
     
-    # $ map.opt_init()
-    $ in_map = True
-    call screen school_map()
-    $ in_map = False
-    '（回到主循环）'
+    $ map.opt_init()
+
+    label .loop:
+        $ _return = None
+        $ in_map = True
+        call screen school_map()
+        $ in_map = False
+        if isinstance(_return, str):
+            call expression _return
+        else:
+            jump .loop
+            
+    
     if not out_of_events or loop_count <= 30:
         jump main_loop
     return
 
 
 
+label building:
+    'building'
+    call screen building_map
+    if isinstance(_return, str):
+        call expression _return
+    else:
+        return 0
 
-
-# label test_loop:
-
-#     label .loop:
-        
-#         $ in_map = True
-#         call screen test_map()
-#         $ in_map= False
     
-
+label building_1:
+    'building_1'
+    return
 
 
 ####################################################
@@ -219,9 +253,7 @@ label playground:
     'playground'
     return
 
-label building:
-    'building'
-    return
+
 
 label cafeteria:
     'cafeteria'

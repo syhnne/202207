@@ -197,6 +197,7 @@ init python:
         
         def __init__(self, *e):
             self.__e = list(e)
+            self.cond = True
 
         def random_event(self):
             if len(self.__e) <= 0:
@@ -206,11 +207,8 @@ init python:
                 return self.__e[0]
 
         def del_event(self):
-            
-            print('delete:--', self.__e[0])
             del self.__e[0]
             
-            print(self.__e)
 
         def add_event(self, ev):
             if isinstance(ev, tuple):
@@ -223,12 +221,10 @@ init python:
             return self.__e
 
 
-    yc = Chr(('y_1',1), ('y_2',3), ('y1',1), ('y2',5), ('y3',7))
-    cc = Chr(('c_1',2), ('c_2',1), ('c1',2), ('c2',3), ('c3',6))
-    bc = Chr(('b_1',3), ('b_2',2), ('b1',1), ('b2',6), ('b3',3))
+    yc = Chr(('y_1',1), ('y1',1), ('y2',5), ('y3',7))#('y_2',3), 
+    cc = Chr(('c_1',2), ('c1',2), ('c2',3), ('c3',6))#('c_2',1), 
+    bc = Chr(('b_1',3), ('b1',1), ('b2',6), ('b3',3))#('b_2',2), 
 
-    ## 他吗的。我是傻逼，要给事件按顺序排，我在y_1那里加个append函数把_2加进列表里不就完事了吗？？？
-    ## 这比我写的那个傻逼方法好多了，想加事件随时都能加，我……唉……
     
     def e():
         return yc.ev() + cc.ev() + bc.ev()
@@ -321,11 +317,8 @@ init python:
         def action(self, l4):
             print('on map.action():')
             if l4[3]:
-                print('chr')
                 l4[3].del_event()
-            else:
-                print('--')
-            renpy.call(l4[1])
+            return(l4[1])
 
     map = MapEvent()
 
