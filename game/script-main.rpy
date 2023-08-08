@@ -1,5 +1,34 @@
 
 
+## main #########################################
+
+label main_loop:
+    $ loop_count += 1
+    '打开地图'
+    
+    # $ map.opt_init()
+    $ in_map = True
+    call screen school_map()
+    $ in_map = False
+    '（回到主循环）'
+    if not out_of_events or loop_count <= 30:
+        jump main_loop
+    return
+
+
+
+
+
+label test_loop:
+
+    label .loop:
+        
+        $ in_map = True
+        call screen test_map()
+        $ in_map= False
+    
+
+
 
 ####################################################
 ## library #########################################
@@ -9,12 +38,12 @@ label libr_loop_main(phase):
     '调查图书馆'
     $ in_map = True
     show screen expression 'libr_map_'+str(phase) with dissolve onlayer map
-    label libr_loop:
+    label .loop:
         scene black
         pause
         $ allow_skipping = False
         if not temp1:
-            jump libr_loop
+            jump .loop
     ## 这里还可以接着说话
     hide screen expression 'libr_map_'+str(phase) with dissolve onlayer map
     $ in_map = False
@@ -85,20 +114,7 @@ label libr_2_end:
 
 
 
-## main #########################################
 
-label main_loop:
-    $ loop_count += 1
-    '打开地图'
-    
-    $ map.opt_init()
-    $ in_map = True
-    call screen school_map()
-    $ in_map = False
-    '（回到主循环）'
-    if not out_of_events or loop_count <= 30:
-        jump main_loop
-    return
 
 
 

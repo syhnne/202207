@@ -73,11 +73,11 @@ python early:
         else:
             renpy.say(who, what)
 
-    renpy.register_statement(
-        name='',
-        parse=parse_say_glitch,
-        execute=execute_say_glitch,
-    )
+    # renpy.register_statement(
+    #     name='',
+    #     parse=parse_say_glitch,
+    #     execute=execute_say_glitch,
+    # )
 
     ## 语句前面加入ng，表示这句话在任何情况下都显示为原文字
     def execute_nonglitch(say_obj):
@@ -86,11 +86,11 @@ python early:
             who = str(eval(who))
         renpy.say(who, what)
     
-    renpy.register_statement(
-        name='ng',
-        parse=parse_say_glitch,
-        execute=execute_nonglitch,
-    )
+    # renpy.register_statement(
+    #     name='ng',
+    #     parse=parse_say_glitch,
+    #     execute=execute_nonglitch,
+    # )
 
 
 
