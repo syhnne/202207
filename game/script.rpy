@@ -34,7 +34,7 @@ default time = 0
 ## 程序内部使用，不要再动了
 default in_map = False
 default loop_count = 0
-default out_of_events = False
+default _out_of_events = False
 default opt = None
 default temp1 = None ## 调查界面退出flag
 
@@ -49,7 +49,7 @@ label start:
 
     # $ scope_memory = {}
     # $ renpy.call_replay('test_memory', scope=scope_memory)
-
+    $ print('-game started!')
     '测试大地图'
     call main_loop
 

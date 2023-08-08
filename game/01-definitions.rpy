@@ -179,15 +179,6 @@ init python:
 
 
 
-    import functools
-
-    def log(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kw):
-            print('call %s():' % func.__name__)
-            return func(*args, **kw)
-        return wrapper
-
 
 
 
@@ -208,7 +199,6 @@ init python:
 
         def del_event(self):
             del self.__e[0]
-            
 
         def add_event(self, ev):
             if isinstance(ev, tuple):
@@ -216,111 +206,197 @@ init python:
             else:
                 raise TypeError('bad event on add_event()')
 
-
         def ev(self):
             return self.__e
 
 
-    yc = Chr(('y_1',1), ('y1',1), ('y2',5), ('y3',7))#('y_2',3), 
-    cc = Chr(('c_1',2), ('c1',2), ('c2',3), ('c3',6))#('c_2',1), 
-    bc = Chr(('b_1',3), ('b1',1), ('b2',6), ('b3',3))#('b_2',2), 
 
+    class Loc():
+
+        def __init__(self, name, pos, label):
+            self.name = name
+            self.label = label ## 对于map来说，这是screen
+            self.pos = pos
+            self.chr = None
+
+        def n(self):
+            return self.name
+
+        def l(self):
+            return Call(self.label)
+
+        def p(self):
+            return self.pos
+
+
+
+    class Map(Loc):
+
+        def __init__(self, name, pos, label, list):
+            Loc.__init__(self, name, pos, label)
+            self.list = list
+
+        def l(self):
+            return ShowTransient(self.label, dissolve)
+
+
+    def list_common(l1, l2):
+        for i in l1:
+            if i in l2:
+                return True
+        return False
+
+
+    ## definitions ##################################################                
+
+        ## Loc: name, pos, label
+        ## Map: name, pos, label, list
     
-    def e():
-        return yc.ev() + cc.ev() + bc.ev()
+    ## t_b_
+    cls2_1 = Loc('高二1班', (100,100), 'cls2_1')
+    cls2_2 = Loc('高二2班', (200,100), 'cls2_2')
+    cls2_3 = Loc('高二3班', (300,100), 'cls2_3')
+
+    ## s_b_
+    sh01 = Loc('阶梯教室1', (100,100), 'sh01')
+    sh04 = Loc('阶梯教室4', (300,100), 'sh04')
+
+    ## libr
+    sroom = Loc('自习室', (300,300), 'sroom')
+
+    ## school_map
+    ## 后面的list还是得手动写啊，甜腻腻的
+    ## 新建一个地点：在screen，下面的list里面分别添加这个地点对象，然后再写个label
+    playgr = Loc('操场', (100,100), 'playground')
+    cafe = Loc('食堂', (300,100), 'cafeteria')
+    t_building = Map('高中楼…', (500,100), 't_b_f1', [cls2_1, cls2_2, cls2_3])
+    s_building = Map('实验楼…', (700,100), 's_b_f1', [sh01, sh04])
+    libr = Map('图书馆楼…', (900,100), 'libr_map', [sroom])
+
+    ## chr
+    yc = Chr(('y_1',cls2_1), ('y1',playgr), ('y2',cafe), ('y3',sroom))
+    cc = Chr(('c_1',sh01), ('c1',cafe), ('c2',sroom), ('c3',sroom))
+    bc = Chr(('b_1',sh01), ('b1',cls2_1), ('b2',cls2_1), ('b3',sroom))
 
 
 
 
 
+    _current_events = None
 
 
-
-
-    class MapEvent():
-
-        def __init__(self):
-            self.current_opt = None
-            self.spot_name = {
-                1:'操场',
-                2:'高中楼',
-                3:'食堂',
-                4:'p40',
-                5:'p50',
-                6:'p60',
-                7:'p70',
-                8:'p80',
-                9:'p90',
-            } 
-            self.spot_label = {
-                1:'playground',
-                2:'building',
-                3:'cafeteria',
-                4:'p4',
-                5:'p5',
-                6:'p6',
-                7:'p7',
-                8:'p8',
-                9:'p9',
-            }
-            self.spot_pos = {
-                1:(100,100),
-                2:(200,100),
-                3:(300,100),
-                4:(400,100),
-                5:(500,100),
-                6:(600,100),
-                7:(700,100),
-                8:(800,100),
-                9:(900,100),
-            }
-            self.spot_available = {
-                1:True,
-                2:True,
-                3:True,
-                4:True,
-                5:True,
-                6:True,
-                7:True,
-                8:True,
-                9:True,
-            }
-
-        def get_options(self):
-            global out_of_events
-            opt_dict = {}
+    def get_options():
+        global _out_of_events, _current_events
+        opt_dict = {}
+        opt_list = ['', '']
+        while len(set(opt_list)) < len(opt_list):
             for chr in {yc,cc,bc}:
                 if chr.random_event() != False:
-                    opt_dict[chr] = chr.random_event()
+                    x = chr.random_event()
+                    opt_dict[x[1]] = (x[0], chr)
             if opt_dict == {}:
-                out_of_events= True
-            return opt_dict
-
-        def opt_init(self):
-            self.current_opt = None
-            self.current_opt = self.get_options()
-        
-        def show_spot(self, number):
-            name, label, pos, chr = self.spot_name[number], self.spot_label[number], self.spot_pos[number], None
-            if self.spot_available[number]:
-                ## showspot
-                if self.current_opt and self.current_opt != {}:
-                    for k,v in self.current_opt.items():
-                        if v[1] == number:
-                            label = v[0]
-                            chr = k
-                        elif v[1] >= 9:
-                            raise ValueError('Invalid location number on map.show_spot()')
-                return [name, label, pos, chr]
+                _out_of_events= True
+                break
             else:
-                return None
-        def action(self, l4):
-            print('on map.action():')
-            if l4[3]:
-                l4[3].del_event()
-            return(l4[1])
+                opt_list = []
+                for ev in opt_dict.values():
+                    opt_list.append(ev[1])
+                if len(set(opt_list)) == len(opt_list):
+                    break
+        _current_events = opt_dict
+        print('-current options:', _current_events)
 
-    map = MapEvent()
+
+
+
+
+
+
+
+    # class MapEvent():
+
+    #     def __init__(self):
+    #         self.current_opt = None
+    #         self.spot_name = {
+    #             1:'操场',
+    #             2:'高中楼',
+    #             3:'食堂',
+    #             4:'p40',
+    #             5:'p50',
+    #             6:'p60',
+    #             7:'p70',
+    #             8:'p80',
+    #             9:'p90',
+    #         } 
+    #         self.spot_label = {
+    #             1:'playground',
+    #             2:'building',
+    #             3:'cafeteria',
+    #             4:'p4',
+    #             5:'p5',
+    #             6:'p6',
+    #             7:'p7',
+    #             8:'p8',
+    #             9:'p9',
+    #         }
+    #         self.spot_pos = {
+    #             1:(100,100),
+    #             2:(200,100),
+    #             3:(300,100),
+    #             4:(400,100),
+    #             5:(500,100),
+    #             6:(600,100),
+    #             7:(700,100),
+    #             8:(800,100),
+    #             9:(900,100),
+    #         }
+    #         self.spot_available = {
+    #             1:True,
+    #             2:True,
+    #             3:True,
+    #             4:True,
+    #             5:True,
+    #             6:True,
+    #             7:True,
+    #             8:True,
+    #             9:True,
+    #         }
+
+    #     def get_options(self):
+    #         global out_of_events
+    #         opt_dict = {}
+    #         for chr in {yc,cc,bc}:
+    #             if chr.random_event() != False:
+    #                 opt_dict[chr] = chr.random_event()
+    #         if opt_dict == {}:
+    #             out_of_events= True
+    #         return opt_dict
+
+    #     def opt_init(self):
+    #         self.current_opt = None
+    #         self.current_opt = self.get_options()
+        
+    #     def show_spot(self, number):
+    #         name, label, pos, chr = self.spot_name[number], self.spot_label[number], self.spot_pos[number], None
+    #         if self.spot_available[number]:
+    #             ## showspot
+    #             if self.current_opt and self.current_opt != {}:
+    #                 for k,v in self.current_opt.items():
+    #                     if v[1] == number:
+    #                         label = v[0]
+    #                         chr = k
+    #                     elif v[1] >= 9:
+    #                         raise ValueError('Invalid Loc number on map.show_spot()')
+    #             return [name, label, pos, chr]
+    #         else:
+    #             return None
+    #     def action(self, l4):
+    #         print('on map.action():')
+    #         if l4[3]:
+    #             l4[3].del_event()
+    #         return(l4[1])
+
+    # map = MapEvent()
 
 
 

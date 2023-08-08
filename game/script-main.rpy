@@ -10,152 +10,51 @@ init python:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## main #########################################
-
-label main_loop:
-
+label main_loop():
+    'main'
+    $ get_options()
     $ loop_count += 1
-    
-    $ map.opt_init()
+    $ print('-map:')
+    call screen school_map
+    '--'
+    jump main_loop
 
-    label .loop:
-        $ _return = None
-        $ in_map = True
-        call screen school_map()
-        $ in_map = False
-        if isinstance(_return, str):
-            call expression _return
-        else:
-            jump .loop
-            
-    
-    if not out_of_events or loop_count <= 30:
-        jump main_loop
+
+
+
+
+
+label cls2_1:
+    'cls2-1'
     return
 
-
-
-label building:
-    'building'
-    call screen building_map
-    if isinstance(_return, str):
-        call expression _return
-    else:
-        return 0
-
-    
-label building_1:
-    'building_1'
+label cls2_2:
+    'cls2-2'
     return
 
-
-####################################################
-## library #########################################
-####################################################
-
-label libr_loop_main(phase):
-    '调查图书馆'
-    $ in_map = True
-    show screen expression 'libr_map_'+str(phase) with dissolve onlayer map
-    label .loop:
-        scene black
-        pause
-        $ allow_skipping = False
-        if not temp1:
-            jump .loop
-    ## 这里还可以接着说话
-    hide screen expression 'libr_map_'+str(phase) with dissolve onlayer map
-    $ in_map = False
-    $ temp1 = None
+label cls2_3:
+    'cls2-3'
     return
 
-
-
-
-
-## libr_1 #########################################
-
-## 为什么会有map写在这？因为这个map属于只是往里面填东西的纯体力劳动，而且每个地点得跟一个label对应，
-## 为了避免写的时候来回翻文件，消耗我的注意力，干脆放在一起
-## 请务必遵循命名规范，至少最后一个字得是数字
-screen libr_map_1():
-    use libr_map_base:
-        has vbox
-        textbutton 'libr_1_1' action Call('libr_1_1')
-        textbutton '结束调查' action Call('libr_1_end')
-
-
-default libr_1_1_ = False
-label libr_1_1:
-    '调查内容'
-    if not libr_1_1_:
-        '你第一次读这个label'
-    else:
-        '你第2次或更多次读了这个label'
-    '真不好意思，要在这里写屎山代码了，但我想不到别的办法来判断玩家是否看过这个label'
-    'renpy唯一给的函数就是那个read，但是它判断的不是这个存档，而是tmd全局'
-    '判断玩家在该存档是否读过一个label的函数，renpy难道没有吗？还是说让我给每个label都手动写一个变量才是设计者的本意？？'
-    $ libr_1_1_ = True
+label sh01:
+    'sh01'
     return
 
-
-
-
-label libr_1_end:
-    '现有的东西都调查完了。'
-    $ temp1 = True
+label sh04:
+    'sh04'
     return
 
-
-
-## libr_2 #########################################
-
-screen libr_map_2():
-    use libr_map_base:
-        has vbox
-        textbutton 'libr_2_1' action Call('libr_2_1')
-        textbutton '结束调查' action Call('libr_2_end')
-
-
-default libr_2_1_ = 1
-label libr_2_1:
-    '第二次来图书馆'
-    '你第[libr_2_1_]次点开这个东西'
-    $ libr_2_1_ += 1
+label sroom:
+    'sroom'
     return
 
-label libr_2_end:
-    '现有的东西都调查完了。'
-    $ temp1 = True
+label playground:
+    'playground'
     return
 
-
-
-
-
-
-
-
-
-
-
-
-
+label cafeteria:
+    'cafeteria'
+    return
 
 
 
@@ -189,7 +88,8 @@ label test_memory:
 
 
 label y_1:
-    'y_1'
+    '你个老6，有本事你写剧本啊！'
+    $ yc.add_event( ('y_2', cls2_1) )
     return
 
 label y_2:
@@ -249,39 +149,6 @@ label b3:
     return
 
 
-label playground:
-    'playground'
-    return
-
-
-
-label cafeteria:
-    'cafeteria'
-    return
-
-label p4:
-    'p4'
-    return
-
-label p5:
-    'p5'
-    return
-
-label p6:
-    'p6'
-    return
-
-label p7:
-    'p7'
-    return
-
-label p8:
-    'p8'
-    return
-
-label p9:
-    'p9'
-    return
 
 
 
