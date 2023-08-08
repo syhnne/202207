@@ -3,11 +3,11 @@
 default persistent.HEYWHATAREYOUDOING = renpy.random.randint(100000,999999)
 default persistent.playthrough = 1
 
-define a = Character("an", image='a', dynamic=True)
-define b = Character("bn", image='b', dynamic=True)
-define c = Character("cn", image='c', dynamic=True)
-define y = Character("yn", image='y', dynamic=True)
-define e = Character("艾琳")
+define a = Character("an", dynamic=True)
+define b = Character("bn", dynamic=True)
+define c = Character("cn", dynamic=True)
+define y = Character("yn", dynamic=True)
+define e = Character("艾琳", interact=False)
 ## 妈的，这种前面带character.的用法竟然和cds冲突。。
 
 default an = 'a'
@@ -43,58 +43,24 @@ default temp1 = None ## 调查界面退出flag
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 喜报：重开了，全都重开了，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈（失智
-
-
-
-
-
-
-
-
-
-
-## 还有一个问题。。之前为了防止玩家推进对话的时候点击地图，我把对话框设为modal了，但是那样就没法快进。。
-## 为了快进，只能去掉modal，但是这样一来地图会在玩家点击屏幕的时候乱跑
-
-
 label start:
 
     # $ scope_memory = {}
     # $ renpy.call_replay('test_memory', scope=scope_memory)
+    # "见到你真好！ {noalt}<3{/noalt}{alt}heart{/alt}"
+    # $ say_glitch = True
+    '我超'
+    e '测试一下interact是什么东西'
+    ## 懂了，interact是false的话，这个句子就会悄悄出现在history里面
 
-    '算了，去他的地图，先试试乱码cds！'
-    a '没办法，只能折中一下，暂时不用imagetag了，反正我立绘都没画呢'
-    call temporary4
-    '……'
-    '测试一下说话的时候能不能放地图'
-    call libr_loop_main(1)
+    ## woc 真绷不住了 文本标签都用不了 还是拉倒吧
+    ## 记录一下，这东西估计有用：$ upper_string = renpy.transform_text("{b}Not Upper{/b}", upper)
 
-    '好了，再调查一次图书馆'
-    call libr_loop_main(2)
-    '哟西！！'
-    '下一个写联合地图，这下真成九转label了，不写几个print都不知道自己人在哪'
+
+    # $ say_glitch = False
+    '测试大地图'
+    '有一种不知道自己在哪干什么的美'
+    call main_loop(libr_1)
 
 
 
@@ -252,7 +218,22 @@ label start:
 
 
 
+## 喜报：重开了，全都重开了，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈（失智
 
+
+
+
+
+## to do list:
+## 修改nvl界面。b站有教程，或者如果nvl界面还有其他用途的话还是直接凭空新建界面吧
+## 改一改之前写的mapevents那一堆东西。现在地图不止一个了，map应该发挥它作为类的作用
+## 做地图大循环。先整这个，其余的回家再说
+
+
+
+
+## 还有一个问题。。之前为了防止玩家推进对话的时候点击地图，我把对话框设为modal了，但是那样就没法快进。。
+## 为了快进，只能去掉modal，但是这样一来地图会在玩家点击屏幕的时候乱跑
 
 
 

@@ -69,13 +69,11 @@ python early:
         else:
             renpy.say(who, what)
 
-
-    # 坏消息：重新定义这个statement会导致id不可用，也就是不能方便地切换角色立绘，所以我要寻找别的方法了。。ng应该也是不可用了
-    renpy.register_statement(
-        name='',
-        parse=parse_say_glitch,
-        execute=execute_say_glitch,
-    )
+    # renpy.register_statement(
+    #     name='',
+    #     parse=parse_say_glitch,
+    #     execute=execute_say_glitch,
+    # )
 
     ## 语句前面加入ng，表示这句话在任何情况下都显示为原文字
     def execute_nonglitch(say_obj):
@@ -222,11 +220,6 @@ init python:
     cc = Chr(('c_1',2), ('c_2',1), ('c1',2), ('c2',3), ('c3',6))
     bc = Chr(('b_1',3), ('b_2',2), ('b1',1), ('b2',6), ('b3',3))
 
-    ## 他吗的。我是傻逼，要给事件按顺序排，我在y_1那里加个append函数把_2加进列表里不就完事了吗？？？
-    ## 这比我写的那个傻逼方法好多了，想加事件随时都能加，我……唉……
-    
-    def e():
-        return yc.ev() + cc.ev() + bc.ev()
 
 
 
@@ -236,93 +229,98 @@ init python:
 
 
 
-    class MapEvent():
 
-        def __init__(self):
-            self.current_opt = None
-            self.spot_name = {
-                1:'操场',
-                2:'高中楼',
-                3:'食堂',
-                4:'p40',
-                5:'p50',
-                6:'p60',
-                7:'p70',
-                8:'p80',
-                9:'p90',
-            } 
-            self.spot_label = {
-                1:'playground',
-                2:'building',
-                3:'cafeteria',
-                4:'p4',
-                5:'p5',
-                6:'p6',
-                7:'p7',
-                8:'p8',
-                9:'p9',
-            }
-            self.spot_pos = {
-                1:(100,100),
-                2:(200,100),
-                3:(300,100),
-                4:(400,100),
-                5:(500,100),
-                6:(600,100),
-                7:(700,100),
-                8:(800,100),
-                9:(900,100),
-            }
-            self.spot_available = {
-                1:True,
-                2:True,
-                3:True,
-                4:True,
-                5:True,
-                6:True,
-                7:True,
-                8:True,
-                9:True,
-            }
 
-        def get_options(self):
-            global out_of_events
-            opt_dict = {}
-            for chr in {yc,cc,bc}:
-                if chr.random_event() != False:
-                    opt_dict[chr] = chr.random_event()
-            if opt_dict == {}:
-                out_of_events= True
-            return opt_dict
+    ## 有空重写角色事件。随机地点的时候，tuple第二位就写地点的这个对象。
+    class Locations():
 
-        def opt_init(self):
-            self.current_opt = None
-            self.current_opt = self.get_options()
+        ## 还需要：地点图标，或许是两个
+        def __init__(self, name, label, pos, cond=True, *args):
+            self.name = name ## str 显示名称
+            self.label = label ## str
+            self.pos = pos ## tuple
+            self.cond = cond ## t or f? 是否显示
+            self.args = args
+
+        def get_attr(self):
+            return [self.name, self.label, self.pos, self.cond, self.args]
+
+        def name(self):
+            ## 为什么写成这样，而不是直接调用：我怕我以后要在这里加幺蛾子，先把函数给他写出来
+            return self.name
+
+        def pos(self):
+            return self.pos
+
+        def cond(self):
+            return self.cond
+
+        def args(self):
+            return args
+
+        def action(self, *args):
+            print('*location call*')
+            renpy.call(self.label, self.args)
+            ## 直接使用call
         
-        def show_spot(self, number):
-            name, label, pos, chr = self.spot_name[number], self.spot_label[number], self.spot_pos[number], None
-            if self.spot_available[number]:
-                ## showspot
-                if self.current_opt and self.current_opt != {}:
-                    for k,v in self.current_opt.items():
-                        if v[1] == number:
-                            label = v[0]
-                            chr = k
-                        elif v[1] >= 9:
-                            raise ValueError('Invalid location number on map.show_spot()')
-                return [name, label, pos, chr]
-            else:
-                return None
-        def action(self, l4):
-            print('on map.action():')
-            if l4[3]:
-                print('chr')
-                l4[3].del_event()
-            else:
-                print('--')
-            renpy.call(l4[1])
 
-    map = MapEvent()
+
+    class Maps(Locations):
+
+        def __init__(self, locations, name, label, pos, cond=True, *args):
+            ## 呃要不我把地点写成一个class？？
+            ## 还需要：map背景，背景viewport大小，
+            Locations.__init__(self, name, label, pos, cond, args)
+            self.locations = locations ## list
+
+        def action(self):
+            renpy.call_screen(base_map, self)
+
+        
+
+
+    libr_1_1 = Locations('书架', 'libr_1_1', (200,200))
+    libr_1 = Maps([libr_1_1, ], '图书馆', 'libr_loop', (100,100), True)
+
+    playgr = Locations('操场', 'playground', (300,200))
+    base_ = Maps([libr_1, playgr, ], '_', 'main_loop', (0,0), True)
+
+
+
+
+    # map = MapEvent(
+    #     name = {
+    #             1:'操场',
+    #             2:'高中楼',
+    #             3:'食堂',
+    #             4:'图书馆…',
+    #             5:'p50',
+    #             6:'p60',
+    #             7:'p70',
+    #             8:'p80',
+    #             9:'p90',
+    #         }, label = {
+    #             1:'playground',
+    #             2:'building',
+    #             3:'cafeteria',
+    #             4:'libr_loop',
+    #             5:'p5',
+    #             6:'p6',
+    #             7:'p7',
+    #             8:'p8',
+    #             9:'p9',
+    #         }, pos = {
+    #             1:(100,100),
+    #             2:(200,100),
+    #             3:(300,100),
+    #             4:(400,100),
+    #             5:(500,100),
+    #             6:(600,100),
+    #             7:(700,100),
+    #             8:(800,100),
+    #             9:(900,100),
+    #         }, 
+    # )
 
 
 

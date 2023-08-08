@@ -126,6 +126,7 @@ define config.has_autosave = False
 define config.save_json_callbacks = [ ]
 # define config.narrator_menu = False
 define config.log_gl_shaders = True
+define config.debug_text_overflow = True
 
 
 

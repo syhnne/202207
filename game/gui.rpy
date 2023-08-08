@@ -49,9 +49,11 @@ define gui.interface_text_color = '#ffffff'
 
 ## 用于游戏内文本的字体。
 define gui.text_font = gui.preference("text_font", "font.ttf")
+define gui.text_font = gui.preference("text_font", "SourceHanSansSC-Normal.otf")
 
 ## 用于角色名称的字体。
-define gui.name_text_font = gui.preference("text_font", "font.ttf")
+# define gui.name_text_font = gui.preference("text_font", "font.ttf")
+define gui.name_text_font = gui.preference("text_font", "SourceHanSansSC-Normal.otf")
 
 ## 用于游戏外文本的字体。
 define gui.interface_text_font = gui.preference("text_font", "SourceHanSansSC-Normal.otf")

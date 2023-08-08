@@ -179,6 +179,8 @@ screen developer_options():
 
 screen say(who, what):
     style_prefix "say"
+    if in_map:
+        modal True
     
     key 'dismiss' action Return()
     window:

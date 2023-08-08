@@ -5,16 +5,16 @@
 ## library #########################################
 ####################################################
 
-label libr_loop_main(phase):
+label libr_loop(phase):
     '调查图书馆'
     $ in_map = True
     show screen expression 'libr_map_'+str(phase) with dissolve onlayer map
-    label libr_loop:
+    label .loop:
         scene black
         pause
         $ allow_skipping = False
         if not temp1:
-            jump libr_loop
+            jump .loop
     ## 这里还可以接着说话
     hide screen expression 'libr_map_'+str(phase) with dissolve onlayer map
     $ in_map = False
@@ -26,15 +26,7 @@ label libr_loop_main(phase):
 
 
 ## libr_1 #########################################
-
-## 为什么会有map写在这？因为这个map属于只是往里面填东西的纯体力劳动，而且每个地点得跟一个label对应，
-## 为了避免写的时候来回翻文件，消耗我的注意力，干脆放在一起
-## 请务必遵循命名规范，至少最后一个字得是数字
-screen libr_map_1():
-    use libr_map_base:
-        has vbox
-        textbutton 'libr_1_1' action Call('libr_1_1')
-        textbutton '结束调查' action Call('libr_1_end')
+        
 
 
 default libr_1_1_ = False
@@ -44,9 +36,7 @@ label libr_1_1:
         '你第一次读这个label'
     else:
         '你第2次或更多次读了这个label'
-    '真不好意思，要在这里写屎山代码了，但我想不到别的办法来判断玩家是否看过这个label'
-    'renpy唯一给的函数就是那个read，但是它判断的不是这个存档，而是tmd全局'
-    '判断玩家在该存档是否读过一个label的函数，renpy难道没有吗？还是说让我给每个label都手动写一个变量才是设计者的本意？？'
+    '书架上有不少灰。'
     $ libr_1_1_ = True
     return
 
@@ -91,9 +81,9 @@ label main_loop:
     $ loop_count += 1
     '打开地图'
     
-    $ map.opt_init()
+    # $ map.opt_init()
     $ in_map = True
-    call screen school_map()
+    call screen base_map(base_)
     $ in_map = False
     '（回到主循环）'
     if not out_of_events or loop_count <= 30:
