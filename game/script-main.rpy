@@ -19,13 +19,13 @@ label main_loop:
 
 
 
-label test_loop:
+# label test_loop:
 
-    label .loop:
+#     label .loop:
         
-        $ in_map = True
-        call screen test_map()
-        $ in_map= False
+#         $ in_map = True
+#         call screen test_map()
+#         $ in_map= False
     
 
 
