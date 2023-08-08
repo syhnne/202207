@@ -52,3 +52,12 @@ image ctc_pixel = At('gui/ctc.png', ctcmove)
 ## story contexts ###################
 
 image rule01 = Text('不要在早上5:30-9:30去图书馆！！')
+
+
+
+
+
+
+## 紧急测试立绘 ####
+image a test = 'images/a_test.png'
+image a t2 = 'images/a_t2.png'

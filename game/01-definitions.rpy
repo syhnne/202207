@@ -5,8 +5,6 @@ init offset = -2
 
 python early:
 
-    import re
-
     ## 精心筛选了这个字体能显示出来的东西（
     nonunicode = '¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿŃńŌōŎŏŐő'
     erererer = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
@@ -47,7 +45,6 @@ python early:
         if l.eol():
             l.expect_noblock('say statement')
             l.advance()
-            # print('who:', '', 'what:', what)
             return ('', what)
         l.revert(state)
         # Try for a two-argument say statement.
@@ -67,12 +64,13 @@ python early:
         who, what = say_obj
         if who != '':
             who = str(eval(who))
-        print('【who】', who, '【what】', what)
         if say_glitch:
             renpy.say(who, glitchtext_p(what))
         else:
             renpy.say(who, what)
 
+
+    # 坏消息：重新定义这个statement会导致id不可用，也就是不能方便地切换角色立绘，所以我要寻找别的方法了。。ng应该也是不可用了
     renpy.register_statement(
         name='',
         parse=parse_say_glitch,
@@ -91,9 +89,6 @@ python early:
         parse=parse_say_glitch,
         execute=execute_nonglitch,
     )
-
-
-
 
 
 

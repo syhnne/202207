@@ -3,10 +3,10 @@
 default persistent.HEYWHATAREYOUDOING = renpy.random.randint(100000,999999)
 default persistent.playthrough = 1
 
-define a = Character("an", dynamic=True)
-define b = Character("bn", dynamic=True)
-define c = Character("cn", dynamic=True)
-define y = Character("yn", dynamic=True)
+define a = Character("an", image='a', dynamic=True)
+define b = Character("bn", image='b', dynamic=True)
+define c = Character("cn", image='c', dynamic=True)
+define y = Character("yn", image='y', dynamic=True)
 define e = Character("艾琳")
 ## 妈的，这种前面带character.的用法竟然和cds冲突。。
 
@@ -85,18 +85,7 @@ label start:
     # $ renpy.call_replay('test_memory', scope=scope_memory)
 
     '算了，去他的地图，先试试乱码cds！'
-    $ say_glitch = True
-    a '好，试试别的角色'
-    a '真难绷！！为什么他不认label啊！！！！！厚礼蟹！！！！！！！！！'
-    '哼哼啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊，不响丸辣，鬼知道这比东西不认label那我修了这么半天努力的意义何在'
-    $ say_glitch = False
-    a '好了，看看他正常没有'
-    '太好了，这种方法是可行的，但glitchtext这个函数给的乱码效果不是特别好'
-    '最好的办法是乱码处用utf-8保存，用ansi打开，那样的乱码看起来更乱码'
-    '但那样的话我就不能用现在这个字体了。要不我还是去用正常字体吧（？'
-
-
-    $ say_glitch = False
+    a '没办法，只能折中一下，暂时不用imagetag了，反正我立绘都没画呢'
     call temporary4
     '……'
     '测试一下说话的时候能不能放地图'
