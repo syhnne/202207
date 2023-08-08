@@ -235,15 +235,15 @@ init python:
     class Locations():
 
         ## 还需要：地点图标，或许是两个
-        def __init__(self, name, label, pos, cond=True, *args):
+        def __init__(self, name, label, pos, cond=True):
             self.name = name ## str 显示名称
             self.label = label ## str
             self.pos = pos ## tuple
             self.cond = cond ## t or f? 是否显示
-            self.args = args
+            self.count = 0 ## map的话就不要碰这个count了
 
         def get_attr(self):
-            return [self.name, self.label, self.pos, self.cond, self.args]
+            return [self.name, self.label, self.pos, self.cond]
 
         def name(self):
             ## 为什么写成这样，而不是直接调用：我怕我以后要在这里加幺蛾子，先把函数给他写出来
@@ -255,28 +255,36 @@ init python:
         def cond(self):
             return self.cond
 
-        def args(self):
-            return args
-
-        def action(self, *args):
-            print('*location call*')
-            renpy.call(self.label, self.args)
-            ## 直接使用call
+        def action(self):
+            print('*location call:', self.label)
+            self.count += 1
+            renpy.call(self.label)
+            
         
 
 
     class Maps(Locations):
 
-        def __init__(self, locations, name, label, pos, cond=True, *args):
+        def __init__(self, locations, name, label, pos, cond=True):
             ## 呃要不我把地点写成一个class？？
             ## 还需要：map背景，背景viewport大小，
-            Locations.__init__(self, name, label, pos, cond, args)
+            Locations.__init__(self, name, label, pos, cond)
             self.locations = locations ## list
 
+        def locations(self):
+            return self.locations
+
         def action(self):
-            renpy.call_screen(base_map, self)
+            print('*map call:', self.label)
+            renpy.call(self.label, self)
 
         
+
+
+
+
+
+
 
 
     libr_1_1 = Locations('书架', 'libr_1_1', (200,200))

@@ -5,10 +5,10 @@
 ## library #########################################
 ####################################################
 
-label libr_loop(phase):
+label libr_loop(map):
     '调查图书馆'
     $ in_map = True
-    show screen expression 'libr_map_'+str(phase) with dissolve onlayer map
+    show screen libr_map_base(map) with dissolve onlayer map
     label .loop:
         scene black
         pause
@@ -16,7 +16,7 @@ label libr_loop(phase):
         if not temp1:
             jump .loop
     ## 这里还可以接着说话
-    hide screen expression 'libr_map_'+str(phase) with dissolve onlayer map
+    hide screen libr_map_base(map) with dissolve onlayer map
     $ in_map = False
     $ temp1 = None
     return
@@ -78,7 +78,7 @@ label libr_2_end:
 ## main #########################################
 
 label main_loop:
-    $ loop_count += 1
+    $ loop_count += 1## 这个以后会重写，下次再改
     '打开地图'
     
     # $ map.opt_init()
