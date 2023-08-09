@@ -2,6 +2,7 @@
 ## 天台那扇门的密码。一般来说玩家不会知道他是多少
 default persistent.HEYWHATAREYOUDOING = renpy.random.randint(100000,999999)
 default persistent.playthrough = 1
+default persistent.firstrun = False
 
 define a = Character("an", dynamic=True)
 define b = Character("bn", dynamic=True)
@@ -32,11 +33,45 @@ default time = 0
 
 
 ## 程序内部使用，不要再动了
-default in_map = False
+default _in_map = False
+default _in_phone = False
 default loop_count = 0
 default _out_of_events = False
 default opt = None
 default temp1 = None ## 调查界面退出flag
+default temp2 = None
+default _glitch_text = False
+
+##
+## 很重要，没有下面的4行，NVL会没有办法清理掉。
+init python:
+    # config.empty_window = None
+    config.window_hide_transition = dissolve
+    config.window_show_transition = dissolve
+
+define n_nvl = Character("naruto", kind=nvl,)
+define e_nvl = Character("iruka", kind=nvl,)
+define nvl_ = Character(None, kind=nvl)
+
+
+
+
+label splashscreen:
+    if not persistent.firstrun:
+        $ preferences.text_cps = 40
+        $ persistent.firstrun = True
+    return
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -46,12 +81,27 @@ default temp1 = None ## 调查界面退出flag
 
 
 label start:
+    $ print('Game started!')
+    
 
-    # $ scope_memory = {}
-    # $ renpy.call_replay('test_memory', scope=scope_memory)
-    $ print('-game started!')
-    '测试大地图'
-    call main_loop
+
+
+    scene bg c classroom at hv
+
+    $ IRUKA.texting_send.append('script_1')
+    $ NAVI.texting_recieved.append('script_2')
+    # jump contact
+
+
+
+    $ _glitch_text = True
+    a '啊这'
+    call temporary5
+
+    scene black with dissolve
+    jump main_loop
+    
+
 
 
 
@@ -67,12 +117,11 @@ label start:
 
 
     ## 坏，我正文就这么几个字，现在估计要改不少。不过鉴于我对这次想出来的东西非常满意，整体来看不算损失惨重
-
+    window hide
 
     # '（显然，你是一位名字叫做[an]的高中学生，正坐在教室里上课。）'
     # '（此时此刻，你正在专心思考自己的名字为什么如此敷衍，并没有注意到你的好朋友正在和你说话。）'
     b '……醒醒，你记不记得化学作业？'
-    pause
     a '啊，什么？咋了？'
     b '化学作业……'
     a '哟，你要开卷啦？'

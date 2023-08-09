@@ -127,9 +127,9 @@ define config.save_json_callbacks = [ ]
 # define config.narrator_menu = False
 define config.log_gl_shaders = True
 
-
-
-
+# default preferences.text_cps = 20
+define config.debug_text_overflow = True
+define config.window_auto_hide = [ "scene", "call screen", "say-centered", "say-bubble" ] ## 去掉了menu
 
 
 

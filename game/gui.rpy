@@ -48,82 +48,55 @@ define gui.interface_text_color = '#ffffff'
 ## 字体和字体大小 #####################################################################
 
 ## 用于游戏内文本的字体。
-define gui.text_font = gui.preference("text_font", "font.ttf")
-
+define gui.text_font = gui.preference("text_font", 'zpix.ttf')
 ## 用于角色名称的字体。
-define gui.name_text_font = gui.preference("text_font", "font.ttf")
-
+define gui.name_text_font = gui.preference("text_font", "zpix.ttf")
 ## 用于游戏外文本的字体。
-define gui.interface_text_font = gui.preference("text_font", "SourceHanSansSC-Normal.otf")
+define gui.interface_text_font = gui.preference("text_font", "font.ttf")
 
-## 普通对话文本的大小。
-define gui.text_size = gui.preference("interface_text_size", 35)
 
-## 已读文本
+
 define gui.read_color = gui.preference("read_color", '#ffffff')
 
-## 角色名称的大小。
-define gui.name_text_size = gui.text_size + 8
 
-## 游戏用户界面中文本的大小。
+
+
+
 define gui.interface_text_size = 33
-
-## 游戏用户界面中标签的大小。
 define gui.label_text_size = 36
-
-## 通知屏幕上文本的大小。
 define gui.notify_text_size = 24
-
-## 游戏标题的大小。
 define gui.title_text_size = 75
 
 
 ## 标题和游戏菜单 #####################################################################
 
-## 标题菜单和游戏菜单使用的图像。
 define gui.main_menu_background = "gui/main_menu.png"
 define gui.game_menu_background = "gui/game_menu.png"
 
 
 ## 对话 ##########################################################################
-##
-## 这些变量控制对话如何在屏幕上逐行显示。
 
-## 包含对话的文本框的高度。
 define gui.textbox_height = 278
-
-## 文本框在屏幕上的垂直位置。0.0 是顶部，0.5 是居中，1.0 是底部。
 define gui.textbox_yalign = 1.0
 
+define gui.text_size = gui.preference("interface_text_size", 35)
+define gui.name_text_size = gui.text_size + 8
 
-## 叙述角色名字相对于文本框的位置。可以是从左侧或顶部起的整数像素，或设为 0.5 来
-## 居中。
-define gui.name_xpos = 300
-define gui.name_ypos = 22
-
-## 角色名字的水平对齐方式。0.0 为左侧对齐，0.5 为居中显示，而 1.0 为右侧对齐。
+define gui.name_xpos = 320
+define gui.name_ypos = 27
 define gui.name_xalign = 0.0
-
-## 包含角色名字的方框的宽度、高度和边框尺寸，或设为 None 来自动确定其大小。
 define gui.namebox_width = 100
 define gui.namebox_height = None
-
-## 包含角色名字的方框的边界尺寸，以左、上、右、下顺序排列。
 define gui.namebox_borders = Borders(5, 5, 5, 5)
-
 ## 若为 True，则名字框的背景将平铺；若为 False，则名字框的背景将缩放。
 define gui.namebox_tile = False
 
 
-## 对话相对于文本框的位置。可以是相对于文本框从左侧或顶部起的整数像素，或设为
-## 0.5 来居中。
-define gui.dialogue_xpos = 460
+
+
+define gui.dialogue_xpos = 465
 define gui.dialogue_ypos = 30
-
-## 对话文本的最大宽度，以像素为单位。
 define gui.dialogue_width = 1050
-
-## 对话文本的水平对齐方式。0.0 为左侧对齐，0.5 为居中显示，而 1.0 为右侧对齐。
 define gui.dialogue_text_xalign = 0.0
 
 
@@ -207,7 +180,7 @@ define gui.choice_button_text_insensitive_color = "#444444"
 ## gui/button 中的图像文件，就像其他类型的按钮一样。
 
 ## 存档位按钮。
-define gui.slot_button_width = 414
+define gui.slot_button_width = 429
 define gui.slot_button_height = 309
 define gui.slot_button_borders = Borders(15, 15, 15, 15)
 define gui.slot_button_text_size = 21
@@ -334,44 +307,28 @@ define gui.history_text_xalign = 0.0
 
 
 ## NVL 模式 ######################################################################
-##
-## NVL 模式屏幕显示 NVL 模式的角色所产生的对话。
 
-## NVL 模式背景窗口的背景边框。
-define gui.nvl_borders = Borders(0, 15, 0, 30)
 
-## Ren'Py 所显示的 NVL 模式条目的最大数量。当要显示的条目多于此数量时，最旧的条
-## 目将被删除。
-define gui.nvl_list_length = 6
 
-## NVL 模式条目的高度。将此设置为 None 可使条目动态调整高度。
-define gui.nvl_height = 173
 
-## 当 gui.nvl_height 为 None 时，NVL 模式条目之间的间距，以及 NVL 模式条目和 NVL
-## 模式菜单之间的间距。
-define gui.nvl_spacing = 15
 
-## 所指定叙述角色的标签的坐标、宽度和对齐方式。
-define gui.nvl_name_xpos = 645
-define gui.nvl_name_ypos = 0
-define gui.nvl_name_width = 225
-define gui.nvl_name_xalign = 1.0
 
-## 对话文本的坐标、宽度和对齐方式。
-define gui.nvl_text_xpos = 675
-define gui.nvl_text_ypos = 12
-define gui.nvl_text_width = 885
-define gui.nvl_text_xalign = 0.0
 
-## nvl_thought 文本（由 nvl_narrator 字符表示的文本）的位置，宽度和对齐方式。
-define gui.nvl_thought_xpos = 360
-define gui.nvl_thought_ypos = 0
-define gui.nvl_thought_width = 1170
-define gui.nvl_thought_xalign = 0.0
 
-## NVL menu_buttons 的位置。
-define gui.nvl_button_xpos = 675
-define gui.nvl_button_xalign = 0.0
+define gui.phone_hsp = 10
+define gui.phone_vsp = 20
+define gui.phone_xsize = 500
+define gui.phone_ysize = 700
+define gui.phone_xoffset = 80
+define gui.phone_yoffset = 100
+
+
+
+
+
+
+
+
 
 ## 本地化 #########################################################################
 

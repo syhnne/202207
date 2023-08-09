@@ -14,24 +14,24 @@ screen map_common(l, bg, sizep):
             for loc in l:
                 if loc in _current_events.keys():
                     imagebutton:
-                        idle 'gui/map/loc.png' 
-                        hover At('gui/map/loc.png', hv)
-                        foreground 'gui/map/loc_evfg.png'
+                        idle At('gui/map/loc.png', pixelzoom4)
+                        hover At('gui/map/loc.png', hv, pixelzoom4)
+                        foreground At('gui/map/loc_evfg.png',pixelzoom4)
                         pos loc.p()
                         action Call(_current_events[loc][0])
                         tooltip _current_events[loc][0]
                 elif isinstance(loc, Map) and list_common(loc.list, _current_events.keys()):
                     imagebutton:
-                        idle 'gui/map/loc.png' 
-                        hover At('gui/map/loc.png', hv)
-                        foreground 'gui/map/loc_evfg.png'
+                        idle At('gui/map/loc.png', pixelzoom4)
+                        hover At('gui/map/loc.png', hv, pixelzoom4)
+                        foreground At('gui/map/loc_evfg.png',pixelzoom4)
                         pos loc.p()
                         action loc.l()
                         tooltip loc.n()
                 else:
                     imagebutton:
-                        idle 'gui/map/loc.png' 
-                        hover At('gui/map/loc.png', hv)
+                        idle At('gui/map/loc.png', pixelzoom4)
+                        hover At('gui/map/loc.png', hv, pixelzoom4)
                         pos loc.p()
                         action loc.l()
                         tooltip loc.n()
@@ -103,3 +103,18 @@ screen libr_map():
     $ l = [sroom]
     use map_common(l, 'gui/map/base.png', (3000,3000)):
         textbutton '返回' action Show('school_map', dissolve)
+
+
+
+
+
+
+screen phone_button():
+    frame:
+        pos (20,20)
+        has vbox
+        spacing gui.navigation_spacing
+        if not _in_phone:
+            textbutton '手机…' action Call('contact')
+        else:
+            textbutton '收起手机' action [ToggleVariable('_in_phone'), Return() ]

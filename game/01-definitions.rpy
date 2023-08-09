@@ -30,70 +30,74 @@ python early:
             else:
                 output += renpy.random.choice(nonunicode+erererer)
         return output
-
-
-
-
-
-    ## 实时文字乱码
-
-    say_glitch = False
-
-    ## 感谢大自然的馈赠：parser.py line 1537
-    def parse_say_glitch(l):
-        state = l.checkpoint()
-        # Try for a single-argument say statement.
-        what = l.triple_string() or l.string()
-        if l.eol():
-            l.expect_noblock('say statement')
-            l.advance()
-            # print('who:', '', 'what:', what)
-            return ('', what)
-        l.revert(state)
-        # Try for a two-argument say statement.
-        who = l.say_expression()
-        what = l.triple_string() or l.string()
-        if (who is not None) and (what is not None):
-            l.expect_eol()
-            l.expect_noblock('say statement')
-            l.advance()
-            return (who, what)
-        # This reports a parse error for any bad statement.
-        l.error('expected statement--01-definitions.rpy')
-  
     
-    def execute_say_glitch(say_obj):
-        global say_glitch
-        who, what = say_obj
-        if who != '':
-            who = str(eval(who))
-        print('【who】', who, '【what】', what)
-        if say_glitch:
-            renpy.say(who, glitchtext_p(what))
+    def glitch_ansi(s):
+        if not isinstance(s,str):
+            return s
         else:
-            renpy.say(who, what)
-
-    # renpy.register_statement(
-    #     name='',
-    #     parse=parse_say_glitch,
-    #     execute=execute_say_glitch,
-    # )
-
-    ## 语句前面加入ng，表示这句话在任何情况下都显示为原文字
-    def execute_nonglitch(say_obj):
-        who, what = say_obj
-        if who != '':
-            who = str(eval(who))
-        renpy.say(who, what)
-    
-    # renpy.register_statement(
-    #     name='ng',
-    #     parse=parse_say_glitch,
-    #     execute=execute_nonglitch,
-    # )
+            s = s.encode('utf-8')
+            s = s.decode('ansi', 'ignore')
+            return s
 
 
 
+
+
+
+
+
+    _glitch_text = True
+
+    def parse_glitchtext(l):
+        global _glitch_text
+        if not _glitch_text:
+            return l.renpy_statement()
+        else:
+            ## 注意：我实在没辙了，glitch text开启的时候id和文本标签之类都是不可用的。
+            state = l.checkpoint()
+            # Try for a single-argument say statement.
+            what = l.triple_string() or l.string()
+            if l.eol():
+                l.expect_noblock('say statement')
+                l.advance()
+                print('who:', '', 'what:', what)
+                return ('', what)
+            l.revert(state)
+            # Try for a two-argument say statement.
+            who = l.say_expression()
+            what = l.triple_string() or l.string()
+            if (who is not None) and (what is not None):
+                l.expect_eol()
+                l.expect_noblock('say statement')
+                l.advance()
+                return (who, what)
+            # This reports a parse error for any bad statement.
+            l.error('expected statement--01-definitions.rpy')
+
+    def execute_glitchtext(say_obj):
+        global _glitch_text
+        if not _glitch_text:
+            pass
+        else:
+            who, what = say_obj
+            if who != '':
+                who = str(eval(who))
+            print('【who】', who, '【what】', what)
+            renpy.say(who, glitch_ansi(what))
+
+    def next_glitchtext(l):
+        global _glitch_text
+        if not _glitch_text:
+            return l
+        else:
+            pass
+
+    renpy.register_statement(
+        name='_',
+        parse=parse_glitchtext,
+        execute=execute_glitchtext,
+        next=next_glitchtext,
+    )
 
 
 
@@ -114,7 +118,7 @@ init python:
 
 
 
-    renpy.add_layer('map', above='master', menu_clear=False)
+    renpy.add_layer('ef', above='overlay')
 
 
     import functools
@@ -280,10 +284,7 @@ init python:
 
 
 
-
-
     _current_events = None
-
 
     def get_options():
         global _out_of_events, _current_events
@@ -304,99 +305,121 @@ init python:
                 if len(set(opt_list)) == len(opt_list):
                     break
         _current_events = opt_dict
-        print('-current options:', _current_events)
 
 
 
 
 
+    ## 作者：黑凤梨BlackPineappl https://www.bilibili.com/read/cv17016134?spm_id_from=333.999.0.0 出处：bilibili
+    ## 感谢大佬的代码，我直接用了（发出懒人的声音
 
 
-
-    # class MapEvent():
-
-    #     def __init__(self):
-    #         self.current_opt = None
-    #         self.spot_name = {
-    #             1:'操场',
-    #             2:'高中楼',
-    #             3:'食堂',
-    #             4:'p40',
-    #             5:'p50',
-    #             6:'p60',
-    #             7:'p70',
-    #             8:'p80',
-    #             9:'p90',
-    #         } 
-    #         self.spot_label = {
-    #             1:'playground',
-    #             2:'building',
-    #             3:'cafeteria',
-    #             4:'p4',
-    #             5:'p5',
-    #             6:'p6',
-    #             7:'p7',
-    #             8:'p8',
-    #             9:'p9',
-    #         }
-    #         self.spot_pos = {
-    #             1:(100,100),
-    #             2:(200,100),
-    #             3:(300,100),
-    #             4:(400,100),
-    #             5:(500,100),
-    #             6:(600,100),
-    #             7:(700,100),
-    #             8:(800,100),
-    #             9:(900,100),
-    #         }
-    #         self.spot_available = {
-    #             1:True,
-    #             2:True,
-    #             3:True,
-    #             4:True,
-    #             5:True,
-    #             6:True,
-    #             7:True,
-    #             8:True,
-    #             9:True,
-    #         }
-
-    #     def get_options(self):
-    #         global out_of_events
-    #         opt_dict = {}
-    #         for chr in {yc,cc,bc}:
-    #             if chr.random_event() != False:
-    #                 opt_dict[chr] = chr.random_event()
-    #         if opt_dict == {}:
-    #             out_of_events= True
-    #         return opt_dict
-
-    #     def opt_init(self):
-    #         self.current_opt = None
-    #         self.current_opt = self.get_options()
+    class NPC(object):
         
-    #     def show_spot(self, number):
-    #         name, label, pos, chr = self.spot_name[number], self.spot_label[number], self.spot_pos[number], None
-    #         if self.spot_available[number]:
-    #             ## showspot
-    #             if self.current_opt and self.current_opt != {}:
-    #                 for k,v in self.current_opt.items():
-    #                     if v[1] == number:
-    #                         label = v[0]
-    #                         chr = k
-    #                     elif v[1] >= 9:
-    #                         raise ValueError('Invalid Loc number on map.show_spot()')
-    #             return [name, label, pos, chr]
-    #         else:
-    #             return None
-    #     def action(self, l4):
-    #         print('on map.action():')
-    #         if l4[3]:
-    #             l4[3].del_event()
-    #         return(l4[1])
+        def __init__(self, name, bio="", texting_default="texting_default", friendship=0):
 
-    # map = MapEvent()
+            self.name = name
+            self.img = name + "_icon.png"
+            self.bio = bio
+            self.friendship = friendship
+            ## 点击联系人，有3种信息显示。
+            ## 主角给联系人发信息的演出，联系人并不会提示有新信息。
+            ## 主角收到了联系人发的信息，会有信息提示。
+            ## 缺省信息演出，如果系统中并没有前两种信息，但是玩家点了联系人，就会演出一个缺省的信息对话。
+            self.texting_send = []
+            self.texting_recieved = []
+            self.texting_default = texting_default
+
+        ## 判断是否有新信息。
+        def has_new_message(self):
+            return len(self.texting_send) > 0
+
+        ## 联系人列表的排列顺序，如果有新消息就排列在前面，除此之外按照友好度排列。假设没有友好度会达到10000
+        def sort_score(self):
+            score = 10000 if self.has_new_message() else 0
+            return self.friendship + score
+
+        ## 获得和联系人的信息的label的名字。
+        def get_message(self):
+            if self.texting_send:
+                return self.texting_send[0]
+
+            if self.texting_recieved:
+                return self.texting_recieved[0]
+
+            return self.texting_default
+
+        ## 删掉已经演出过的短信剧本。
+        def pop_message(self):
+            if self.texting_send:
+                self.texting_send.pop(0)
+
+            if self.texting_recieved:
+                self.texting_recieved.pop(0)
+
+    NARUTO = NPC('naruto')
+    IRUKA = NPC('iruka', "今天也要好好学习。", friendship=5)
+    NAVI = NPC('navi', "通讯记录刷新中", friendship=1)
+    KAKASHI = NPC('kakashi', "周刊征稿，请联系我。", friendship=2)
+    C_1 = NPC('c1', "自我介绍")
+    C_2 = NPC('c2', "关于我的关键字")
+    C_3 = NPC('c3', "随便写写")
+    C_4 = NPC('c4', "这个是我的网站")
+    C_5 = NPC('c5', "小猫咪能有什么坏心眼")
+
+
+
+    class Contact(object):
+        def __init__(self, mc, npcs=[]):
+            ## 主角的名字，因为主角在发短信的屏幕和别人的显示不同，这里记录下主角的名字。
+            self.mc = mc
+
+            ## 用字典储存联系人，键是人名字的字符串，值是NPC对象。
+            self.contacts = dict()
+
+            ## 是否在nvl mode启用这个phone的屏幕。如果不在游戏里使用nvl，可以直接改自带的nvl screen
+            self.enable_phone_mode = True
+
+            ## 初始化主角的通讯录，添加NPC到通讯录中。
+            for npc in npcs:
+                self.add(npc)
+
+        ## 添加一个联系人到通讯录。参数是一个NPC对象。
+        def add(self, npc):
+            self.contacts[npc.name] = npc
+
+        ## 从通讯录删掉一个联系人。参数是一个字符串，npc的名字。
+        def remove(self, name):
+            del self.contacts[name]
+
+        ## 通过NPC名字的字符串获得NPC对应的头像，用于聊天对话显示。
+        def get_icon(self, name):
+            if name == self.mc:
+                return self.mc.img
+
+            return self.contacts[name].img
+
+        ## 获得和联系人短信脚本的label的名字，是一个字符串。
+        def get_message(self, name):
+            return self.contacts[name].get_message() 
+
+    contact = Contact(NARUTO, [IRUKA, NAVI, KAKASHI, C_1, C_2, C_3, C_4, C_5])
+
+
+
+
+
+    def nvl_adv_callback(mode, old_modes):
+        global _history
+        old = old_modes[0]
+
+        if mode == "nvl" or mode == "nvl_menu":
+            _history = False
+
+        if mode == "say" or mode == "menu":
+            _history = True
+
+    config.mode_callbacks.append(nvl_adv_callback)
 
 
 
@@ -428,8 +451,14 @@ init python:
 
 
 
-    renpy.add_layer('effects', above='master', below=None, menu_clear=False)
-    effects = 'effects'
+
+
+
+
+
+
+
+
 
     
         
@@ -512,7 +541,7 @@ label _game_menu_mod(*args, _game_menu_screen=_game_menu_screen, **kwargs):
     ## 第一次截屏发生在_enter_menu()函数里面，我猜那个是给FileScreenshot用的，结果我猜对了
     ## 第二次截屏就是下文的menuscrs，我要保证他发生在我手动隐藏interface之后
     ## 20230713:地图变大了，变成了viewport，只好来这里改
-    if not in_map:
+    if not _in_map:
         $ renpy.run(HideInterfaceMod())
     $ menuscrs()
 

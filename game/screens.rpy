@@ -3,6 +3,7 @@ init offset = -1
 style default:
     properties gui.text_properties()
     language gui.language
+    font FontGroup().add("font.ttf", 0x0020, 0x007f).add("zpix.ttf", 0x0000, 0xffff)
 style input:
     properties gui.text_properties("input", accent=True)
     adjust_spacing False
@@ -49,7 +50,9 @@ style frame:
     background Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile)
 
 
-
+style ruby_style is default:
+    size 15
+    yoffset -35
 
 
 
@@ -171,6 +174,7 @@ screen developer_options():
         has vbox
         text '天台密码：[persistent.HEYWHATAREYOUDOING]'
         text 'persistent.playthrough = [persistent.playthrough]'
+        text 'persistent.firstrun = [persistent.firstrun]'
         # text '[tt.history_get()]'
         textbutton '清除游戏数据' action Confirm('确认重置全部游戏数据？', Function(reset_game_data))
 
@@ -179,7 +183,6 @@ screen developer_options():
 
 screen say(who, what):
     style_prefix "say"
-    
     key 'dismiss' action Return()
     window:
         id "window"
@@ -223,8 +226,7 @@ style window:
     xfill True
     yalign gui.textbox_yalign
     ysize gui.textbox_height
-
-    background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
+    background At("gui/textbox.png", pixelzoom11, center)
 
 style namebox:
     xpos gui.name_xpos
@@ -243,12 +245,12 @@ style say_label:
 
 style say_dialogue:
     properties gui.text_properties("dialogue")
-
     xpos gui.dialogue_xpos
     xsize gui.dialogue_width
     ypos gui.dialogue_ypos
-
     adjust_spacing False
+    line_leading 7
+    ruby_style style.ruby_style
 
 ## 输入界面 ########################################################################
 
@@ -303,13 +305,15 @@ transform choicemove:
     easeout 0.4 xoffset 5
     easein 0.4 xoffset 0
     repeat
-image choice_button_fg_i = Composite((855,86),(33,27),'gui/button/choice_fg.png',)
-image choice_button_fg_h = At( Composite((855,86),(33,27),'gui/button/choice_fg.png',) , choicemove)
+
+
 
 style choice_button is default:
     properties gui.button_properties("choice_button")
-    hover_foreground 'choice_button_fg_h'
-    idle_foreground 'choice_button_fg_i'
+    hover_background At('gui/button/choice_hover_background.png', pixelzoom11)
+    idle_background At('gui/button/choice_idle_background.png', pixelzoom11)
+    hover_foreground At('gui/button/choice_fg.png', pixelzoom11, choicemove, leftcenter)
+    idle_foreground At('gui/button/choice_fg.png', pixelzoom11, leftcenter)
 
 style choice_button_text is default:
     properties gui.button_text_properties("choice_button")
@@ -637,11 +641,11 @@ screen file_slots(title):
                     $ slot = i + 1
 
                     button:
-                        action FileAction(slot)
+                        action FileAction(slot) alternate FileDelete(slot)
 
                         has vbox
 
-                        add FileScreenshot(slot) xalign 0.5
+                        add FileScreenshot(slot) xalign 0.5 xoffset 10
 
                         text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
                             style "slot_time_text"
@@ -701,6 +705,7 @@ style page_button_text:
 
 style slot_button:
     properties gui.button_properties("slot_button")
+    background At('gui/button/slot_idle_background.png', pixelzoom11)
 
 style slot_button_text:
     properties gui.button_text_properties("slot_button")
@@ -743,10 +748,10 @@ screen preferences():
 
                 if config.developer:
                     vbox:
-                        style_prefix "radio"
-                        label '低配模式'
-                        textbutton '打开' action [Function(gui.SetPreference("low_performance_mode", True)), SetVariable('menuscrsdata', None)]
-                        textbutton '关闭' action Function(gui.SetPreference("low_performance_mode", False))
+                        
+                        label ''
+                        textbutton '低配模式' action gui.TogglePreference("low_performance_mode", True, False) style_prefix "check"
+                        textbutton '清除截屏缓存' action SetVariable('menuscrsdata', None) 
 
             null height (4 * gui.pref_spacing)
 
@@ -851,10 +856,12 @@ style check_vbox:
 
 style check_button:
     properties gui.button_properties("check_button")
-    foreground "gui/button/check_[prefix_]foreground.png"
+    background At("gui/button/check_[prefix_]background.png", pixelzoom4, leftcenter5)
+    foreground At("gui/button/check_[prefix_]foreground.png", pixelzoom4, leftcenter5)
 
 style check_button_text:
     properties gui.button_text_properties("check_button")
+    xoffset 10
 
 style slider_slider:
     xsize 525
@@ -947,6 +954,8 @@ style history_text:
     min_width gui.history_text_width
     text_align gui.history_text_xalign
     layout ("subtitle" if gui.history_text_xalign else "tex")
+    line_leading 7
+    ruby_style style.ruby_style
 
 style history_label:
     xfill True
@@ -960,17 +969,13 @@ style history_label_text:
 
 screen confirm(message, yes_action, no_action):
 
-    ## 显示此界面时，确保其他界面无法输入。
     modal True
-
     zorder 200
-
     style_prefix "confirm"
-
     add "gui/overlay/confirm.png"
 
     frame:
-
+        at ctc_appear
         vbox:
             xalign .5
             yalign .5
@@ -1102,115 +1107,162 @@ style notify_text:
 
 
 screen nvl(dialogue, items=None):
-
-    window:
-        style "nvl_window"
-
-        has vbox:
-            spacing gui.nvl_spacing
-
-        ## 在 vpgrid 或 vbox 中显示对话框。
-        if gui.nvl_height:
-
-            vpgrid:
-                cols 1
-                yinitial 1.0
-
-                use nvl_dialogue(dialogue)
-
-        else:
-
-            use nvl_dialogue(dialogue)
-
-        ## Displays the menu, if given. The menu may be displayed incorrectly if
-        ## config.narrator_menu is set to True.
-        for i in items:
-
-            textbutton i.caption:
-                action i.action
-                style "nvl_button"
-
-    add SideImage() xalign 0.0 yalign 1.0
+    tag phone
+    if contact.enable_phone_mode:
+        use phone_dialogue(dialogue, items)
 
 
-screen nvl_dialogue(dialogue):
 
+## 消息出现的动态效果。因为可能是收也可能是发
+## 用direction来决定出现的方向。
+transform message_appear(direction):
+    alpha 0.0
+    xoffset 100 * direction
+    parallel:
+        ease 0.5 alpha 1.0
+    parallel:
+        easein_back 0.5 xoffset 0
+
+
+
+screen phone_base(yinitial=0):
+    zorder 10 
+    frame:
+        xcenter 0.3 yalign 0.5
+        background "gui/mobile/phone_bg.png"
+        viewport:
+            offset (gui.phone_xoffset, gui.phone_yoffset) xysize (gui.phone_xsize, gui.phone_ysize)
+            draggable True
+            mousewheel True
+            scrollbars 'vertical'
+            yinitial yinitial
+            transclude
+
+
+screen phone_dialogue(dialogue, items=None):
+    use phone_base(1.0):
+        vbox:
+            spacing 10
+            xfill True
+
+            null height 20
+            
+            use nvl_phonetext(dialogue, items)
+            null height 20
+
+            ## 负责显示选项的部分
+            for i in items:
+                button:
+                    action i.action
+                    pos (0,0)
+                    xysize (gui.phone_xsize-30, 60)
+                    background Solid(gui.idle_color)
+                    hover_background Solid(gui.hover_color)
+                    text i.caption align (0.5,0.5) text_align 0.5 color "#000"
+
+
+
+
+screen nvl_phonetext(dialogue, items=None):
+
+    ## dialogue 是对话，items是负责选项的部分。
     for d in dialogue:
+        ## 如果是旁白，这样显示。
+        if d.who == None:
+            text d.what:
+                pos (0,0) ## 这是一句神奇的代码，不加上它，你就看不见自己做了什么东西出来
+                text_align 0.5
+                xalign 0.5
+                color "#00000056"
+                size gui.text_size*0.8
+                xsize gui.phone_xsize - 170
+                italic True
+                slow_cps False
+                id d.what_id
+                if d.current:
+                    at transform:
+                        alpha 0.0
+                        yoffset -50
+                        parallel:
+                            ease 0.5 alpha 1.0
+                        parallel:
+                            easein_back 0.5 yoffset 0
+        else:
+            hbox:
+                xpos 18 spacing 10
+                xsize gui.phone_xsize
 
-        window:
-            id d.window_id
+                ## 判断现在说话的人是不是主角，因为主角的显示方式和其他人不同。比如主角头像的方向和其他说话人不同。
+                if d.who == contact.mc.name:
+                    $ message_frame = "gui/mobile/send_base.png"
+                    $ direction = 1
+                    ## 因为主角是先显示对话框再显示头像，所以这里用下面这个参数。
+                    box_reverse True
+                else:
+                    $ message_frame = "gui/mobile/text_base.png"
+                    $ direction = -1
 
-            fixed:
-                yfit gui.nvl_height is None
+                # $ message_icon = d.who + "_icon.png"
+                $ message_icon = 'gui/mobile/common_icon.png'
 
-                if d.who is not None:
+                ## 有选择枝的时候，items不为空，但是current为True，会重新加载最后一句对话。为了避免重新加载，需要判断是否有选择枝。
+                add message_icon:
+                    if d.current and not items:
+                        at transform:
+                            zoom 0.0
+                            ease_back 0.5 zoom 1.0
+                # vbox:
+                
+                frame:
+                    yalign 1.0
+                    padding (10,10)
+                    # xsize gui.phone_xsize - 150
 
-                    text d.who:
-                        id d.who_id
+                    if d.current and not items:
+                        at message_appear(direction)
 
-                text d.what:
-                    id d.what_id
-
-
-## 此语句控制一次可以显示的 NVL 模式条目的最大数量。
-define config.nvl_list_length = gui.nvl_list_length
-
-style nvl_window is default
-style nvl_entry is default
-
-style nvl_label is say_label
-style nvl_dialogue is say_dialogue
-
-style nvl_button is button
-style nvl_button_text is button_text
-
-style nvl_window:
-    xfill True
-    yfill True
-
-    background "gui/nvl.png"
-    padding gui.nvl_borders.padding
-
-style nvl_entry:
-    xfill True
-    ysize gui.nvl_height
-
-style nvl_label:
-    xpos gui.nvl_name_xpos
-    xanchor gui.nvl_name_xalign
-    ypos gui.nvl_name_ypos
-    yanchor 0.0
-    xsize gui.nvl_name_width
-    min_width gui.nvl_name_width
-    text_align gui.nvl_name_xalign
-
-style nvl_dialogue:
-    xpos gui.nvl_text_xpos
-    xanchor gui.nvl_text_xalign
-    ypos gui.nvl_text_ypos
-    xsize gui.nvl_text_width
-    min_width gui.nvl_text_width
-    text_align gui.nvl_text_xalign
-    layout ("subtitle" if gui.nvl_text_xalign else "tex")
-
-style nvl_thought:
-    xpos gui.nvl_thought_xpos
-    xanchor gui.nvl_thought_xalign
-    ypos gui.nvl_thought_ypos
-    xsize gui.nvl_thought_width
-    min_width gui.nvl_thought_width
-    text_align gui.nvl_thought_xalign
-    layout ("subtitle" if gui.nvl_text_xalign else "tex")
-
-style nvl_button:
-    properties gui.button_properties("nvl_button")
-    xpos gui.nvl_button_xpos
-    xanchor gui.nvl_button_xalign
-
-style nvl_button_text:
-    properties gui.button_text_properties("nvl_button")
+                    text d.what:
+                        pos (0,0)
+                        xsize gui.phone_xsize - 170
+                        slow_cps False
+                        color "#000"
+                        id d.what_id
 
 
+
+
+screen contact:
+    zorder 1
+    modal True
+    tag phone
+    $ contacts = contact.contacts.values()
+    $ contacts = sorted(contacts, key=lambda x: x.sort_score(), reverse=True)
+
+    # button xysize (1280, 720) action [Hide('contact'), Return()]
+    use phone_base():
+        vbox:
+            spacing gui.phone_vsp
+            for idx, npc in enumerate(contacts):
+                button:
+                    action [Hide('contact'), Jump(contact.get_message(npc.name))]
+                    vbox:
+                        text npc.name:
+                            color '#000000'
+                            hover_color gui.accent_color
+                        if npc.has_new_message():
+                            text "(New)" color gui.accent_color
+                        text npc.bio color gui.idle_color
+                        if idx != len(contacts) - 1:
+                            add Solid("#0000001f", xsize=gui.phone_xsize-30, ysize=4)
+
+
+
+
+
+# transform phone_appear:
+#     on show:
+#         yoffset 720
+#         easein_back 1.0 yoffset -50
 
 ################################################################################
 ## 移动设备界面
@@ -1241,7 +1293,7 @@ screen quick_menu():
 
 style window:
     variant "small"
-    background "gui/phone/textbox.png"
+    background At("gui/phone/textbox.png", pixelzoom10)
 
 style radio_button:
     variant "small"
