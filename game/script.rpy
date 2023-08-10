@@ -62,7 +62,9 @@ label splashscreen:
         $ persistent.firstrun = True
     return
 
-
+label after_load:
+    $ print('-Game loaded!-')
+    return
 
 
 
@@ -81,7 +83,7 @@ label splashscreen:
 
 
 label start:
-    $ print('Game started!')
+    $ print('-------------------Game started!------------------------')
     
 
 
@@ -93,10 +95,6 @@ label start:
     # jump contact
 
 
-
-    $ _glitch_text = True
-    a '啊这'
-    call temporary5
 
     scene black with dissolve
     jump main_loop

@@ -336,7 +336,7 @@ screen quick_menu():
             textbutton _("历史") action MenuHideInterface('history')
             textbutton _("快进") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("自动") action Preference("auto-forward", "toggle")
-            textbutton _("保存") action MenuHideInterface('save')
+            textbutton _("存档") action MenuHideInterface('file_slots')
             textbutton _("设置") action MenuHideInterface('preferences')
 
 
@@ -371,9 +371,8 @@ screen navigation():
 
         else:
             textbutton _("历史") action ShowMenu("history")
-            textbutton _("保存") action ShowMenu("save")
 
-        textbutton _("读取游戏") action ShowMenu("load")
+        textbutton _("存档") action ShowMenu("file_slots")
         textbutton _("设置") action ShowMenu("preferences")
         if config.developer:
             textbutton '开发者选项' action ShowMenu('developer_options')
@@ -602,18 +601,39 @@ style about_label_text:
 
 ## 读取和保存界面 #####################################################################
 
-screen save():
+
+screen fileaction(slot):
+    vbox:
+        xalign 0.5 ypos -240
+        hbox:
+            spacing 20
+            imagebutton:
+                idle At('gui/button/filesave.png', pixelzoom8)
+                insensitive At('gui/button/filesave.png', pixelzoom8, darken)
+                action [ClearFocus(str(slot)),FileSave(slot), ]
+                hovered CaptureFocus(str(slot))
+                sensitive main_menu!=True
+                tooltip '保存'
+            imagebutton:
+                idle At('gui/button/fileload.png', pixelzoom8)
+                insensitive At('gui/button/fileload.png', pixelzoom8, darken)
+                action [ClearFocus(str(slot)), FileLoad(slot), ]
+                hovered CaptureFocus(str(slot))
+                tooltip '读取'
+            imagebutton:
+                idle At('gui/button/filedelete.png', pixelzoom8)
+                insensitive At('gui/button/filedelete.png', pixelzoom8, darken)
+                action [ClearFocus(str(slot)),FileDelete(slot), ]
+                hovered CaptureFocus(str(slot))
+                tooltip '删除'
+        $ tooltip = GetTooltip()
+        if tooltip:
+            text tooltip xpos 14 ypos -160
+    
+screen file_slots():
     tag menu
-    use file_slots(_("保存"))
-
-screen load():
-    tag menu
-    use file_slots(_("读取游戏"))
-
-
-screen file_slots(title):
     default page_name_value = FilePageNameInputValue(pattern=_("第 {} 页"), auto=_("自动存档"), quick=_("快速存档"))
-    use game_menu(title):
+    use game_menu('存档'):
 
         fixed:
             order_reverse True
@@ -630,30 +650,27 @@ screen file_slots(title):
 
             grid gui.file_slot_cols gui.file_slot_rows:
                 style_prefix "slot"
-
                 xalign 0.5
                 yalign 0.5
-
-                spacing gui.slot_spacing
+                
+            grid gui.file_slot_cols gui.file_slot_rows:
+                style_prefix "slot" xalign 0.5 yalign 0.5 spacing gui.slot_spacing
 
                 for i in range(gui.file_slot_cols * gui.file_slot_rows):
-
                     $ slot = i + 1
-
                     button:
-                        action FileAction(slot) alternate FileDelete(slot)
-
+                        action NullAction()
+                        hovered CaptureFocus(str(slot))
+                        unhovered ClearFocus(str(slot))
                         has vbox
-
-                        add FileScreenshot(slot) xalign 0.5 xoffset 10
-
-                        text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
-                            style "slot_time_text"
-
-                        text FileSaveName(slot):
-                            style "slot_name_text"
-
+                        add FileScreenshot(slot) xoffset 8 yoffset -5
+                        text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")) style "slot_time_text"
+                        if GetFocusRect(str(slot)):
+                            use fileaction(slot)
                         key "save_delete" action FileDelete(slot)
+
+            
+            
 
             hbox:
                 style_prefix "page"
@@ -685,7 +702,8 @@ style page_button_text is gui_button_text
 
 style slot_button is gui_button
 style slot_button_text is gui_button_text
-style slot_time_text is slot_button_text
+style slot_time_text is slot_button_text:
+    color gui.idle_small_color
 style slot_name_text is slot_button_text
 
 style page_label:

@@ -1,8 +1,17 @@
 
 screen watch():
     zorder 300
-    style_prefix 'developer'
-    text str(loop_count) xalign 0.5
+    vbox:
+        style_prefix 'developer'
+        xalign 0.5
+        text str(loop_count)
+        if current_events:
+            text 'Events appended.'
+
+
+style developer_text:
+    font "SourceHanSansSC-Normal.otf"
+    size 20
 
 init python:
     config.overlay_screens.append('watch')
@@ -97,12 +106,17 @@ label texting_default:
 
 
 label main_loop():
+    
     'main'
-    $ get_options()
+    $ current_events = get_options()
     $ loop_count += 1
-    $ print('-map:')
+    $ print('-map-')
+    $ print('all events remaining:', get_allev())
+    if current_events:
+        $ print('current events:', current_events)
     $ _in_map = True
-    call screen school_map
+    ## 日尼玛，我开的选项为啥存个档就没了？？
+    call screen school_map()
     $ _in_map = False
     '--'
     jump main_loop

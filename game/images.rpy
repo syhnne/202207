@@ -24,6 +24,13 @@ transform leftcenter:
 transform leftcenter5:
     yalign 0.5
 
+transform hv:
+    matrixcolor TintMatrix("#ffffff") * SaturationMatrix(0.9)
+    alpha 0.8
+    
+transform darken:
+    matrixcolor TintMatrix("#ffffff") * BrightnessMatrix(-0.2) * SaturationMatrix(0.8)
+
 transform pixelzoom4:
     ## loc, loc_evfg
     nearest True subpixel True zoom 4

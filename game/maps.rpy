@@ -1,26 +1,24 @@
 
 
-transform hv:
-    alpha 0.8
-
-
 ## 这个特殊事件的红点提示只能持续一层，如果有两层及以上套娃，就寄了。解决方法很简单：别写多层套娃就行。
 screen map_common(l, bg, sizep):
+
     viewport:
         draggable True
         window:
             xysize sizep
             background bg
             for loc in l:
-                if loc in _current_events.keys():
+                if current_events and loc in list(current_events.keys()):
+                    $ print('has event:',str(loc))
                     imagebutton:
                         idle At('gui/map/loc.png', pixelzoom4)
                         hover At('gui/map/loc.png', hv, pixelzoom4)
                         foreground At('gui/map/loc_evfg.png',pixelzoom4)
                         pos loc.p()
-                        action Call(_current_events[loc][0])
-                        tooltip _current_events[loc][0]
-                elif isinstance(loc, Map) and list_common(loc.list, _current_events.keys()):
+                        action Function(loc_action(loc))
+                        tooltip current_events[loc][0]
+                elif current_events and isinstance(loc, Map) and list_common(loc.list, current_events.keys()):
                     imagebutton:
                         idle At('gui/map/loc.png', pixelzoom4)
                         hover At('gui/map/loc.png', hv, pixelzoom4)

@@ -186,23 +186,58 @@ init python:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     import random
+
 
     class Chr():
         
-        def __init__(self, *e):
+        def __init__(self, p, *e):
             self.__e = list(e)
+            self.__p = p
             self.cond = True
 
         def random_event(self):
             if len(self.__e) <= 0:
                 return False
+            elif random.random() >= self.__p:
+                return False
             else:
                 random.shuffle(self.__e)
+                print(str(self), self.__e)
                 return self.__e[0]
 
-        def del_event(self):
-            del self.__e[0]
+        def action(self, p=0.1):
+            if len(self.__e)>0:
+                self.__p += p
+                e = str(self.__e[0])
+                del self.__e[0]
+                print('Chr.action():', str(self), '-deleted:', e)
+                print('Chr.action():', str(self), '-remain:', str(self.__e))
+            else:
+                print('Chr.action():', 'chr'+str(self)+'out of events')
 
         def add_event(self, ev):
             if isinstance(ev, tuple):
@@ -211,8 +246,9 @@ init python:
                 raise TypeError('bad event on add_event()')
 
         def ev(self):
-            return self.__e
-
+            if len(self.__e)>0:
+                return self.__e
+            return None
 
 
     class Loc():
@@ -278,33 +314,76 @@ init python:
     libr = Map('图书馆楼…', (900,100), 'libr_map', [sroom])
 
     ## chr
-    yc = Chr(('y_1',cls2_1), ('y1',playgr), ('y2',cafe), ('y3',sroom))
-    cc = Chr(('c_1',sh01), ('c1',cafe), ('c2',sroom), ('c3',sroom))
-    bc = Chr(('b_1',sh01), ('b1',cls2_1), ('b2',cls2_1), ('b3',sroom))
+    yc = Chr(0.2, ('y_1',cls2_1), ('y1',playgr), ('y2',cafe), ('y3',sroom))
+    cc = Chr(0.3, ('c_1',sh01), ('c1',cafe), ('c2',sroom), ('c3',sroom))
+    bc = Chr(0.4, ('b_1',sh01), ('b1',cls2_1), ('b2',cls2_1), ('b3',sroom))
 
 
 
-    _current_events = None
+    current_events = None
 
     def get_options():
-        global _out_of_events, _current_events
         opt_dict = {}
-        opt_list = ['', '']
-        while len(set(opt_list)) < len(opt_list):
-            for chr in {yc,cc,bc}:
-                if chr.random_event() != False:
-                    x = chr.random_event()
-                    opt_dict[x[1]] = (x[0], chr)
-            if opt_dict == {}:
-                _out_of_events= True
-                break
-            else:
-                opt_list = []
-                for ev in opt_dict.values():
-                    opt_list.append(ev[1])
-                if len(set(opt_list)) == len(opt_list):
-                    break
-        _current_events = opt_dict
+        for chr in {yc,cc,bc}:
+            x = chr.random_event()
+            if isinstance(x, tuple):
+                opt_dict[x[1]] = (x[0], chr)  ## 放进去一个 地点：（label，角色） 的键值对
+                ## 淦，一不小心写了个自动查重。。那就不改了，回去给chr.random_event加个概率，就说角色不一定会出来找你，这是游戏特性
+        if opt_dict == {}:
+            return None
+        return opt_dict
+
+    def get_allev():
+        l = []
+        for chr in {yc,cc,bc}:
+            e = chr.ev()
+            if e != None:
+                for i in e:
+                    l.append(i[0])
+        if len(l)==0:
+            return None
+        else:
+            return l
+
+    def loc_action(loc):
+        print('loc_action():',str(loc))
+        if current_events:
+            ev = current_events[loc]
+            chr = ev[1]
+            chr.action()
+            return Call(ev[0])
+        else:
+            renpy.error('没事件了你怎么还能选啊')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -405,8 +484,14 @@ init python:
 
     contact = Contact(NARUTO, [IRUKA, NAVI, KAKASHI, C_1, C_2, C_3, C_4, C_5])
 
-
-
+    # def fileclearfocus(slot_s):
+    #     global gui.file_slot_rows, gui.file_slot_cols
+    #     slot = int(slot_s)
+    #     l = []
+    #     for i in range(gui.file_slot_rows*gui.file_slot_cols):
+    #         if i != slot:
+    #             l.append(i)
+        
 
 
     def nvl_adv_callback(mode, old_modes):
