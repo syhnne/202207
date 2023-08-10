@@ -33,23 +33,23 @@ transform darken:
 
 transform pixelzoom4:
     ## loc, loc_evfg
-    nearest True subpixel True zoom 4
+    nearest True zoom 4
 
 transform pixelzoom6:
 
-    nearest True subpixel True zoom 6
+    nearest True zoom 6
 
 transform pixelzoom8:
     ## filesave, fileload, filedelete
-    nearest True subpixel True zoom 8
+    nearest True zoom 8
 
 transform pixelzoom10:
     ## slotbutton
-    nearest True subpixel True zoom 10
+    nearest True zoom 10
 
 transform pixelzoom11:
     ## window, ctc
-    nearest True subpixel True zoom 11
+    nearest True zoom 11
 
 
 

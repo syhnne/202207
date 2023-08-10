@@ -220,20 +220,29 @@ init python:
             self.cond = True
 
         def random_event(self):
+            rf = random.random()
             if len(self.__e) <= 0:
                 return False
-            elif random.random() >= self.__p:
+            elif rf >= self.__p:
                 return False
             else:
                 random.shuffle(self.__e)
                 print(str(self), self.__e)
                 return self.__e[0]
 
-        def action(self, p=0.1):
+        ## renpy会在鼠标移动到按钮上，刷新screen状态的时候，直接调用这个函数，导致我手里的事件不知不觉地就被删掉了。
+        ## 所以一切操作必须写在这个闭包函数g()里面，不然会出现“角色事件刷新概率为170%”之类的离谱事件。
+        ## 要不要去github提个反馈。。。。
+        def action(self):
             if len(self.__e)>0:
-                self.__p += p
                 e = str(self.__e[0])
-                del self.__e[0]
+                def f(self):
+                    def g():
+                        self.__p = self.__p + 0.1
+                        del self.__e[0]
+                    return g
+                f_return = f(self)
+                return f_return
                 print('Chr.action():', str(self), '-deleted:', e)
                 print('Chr.action():', str(self), '-remain:', str(self.__e))
             else:
@@ -249,7 +258,8 @@ init python:
             if len(self.__e)>0:
                 return self.__e
             return None
-
+        def p(self):
+            return self.__p
 
     class Loc():
 
@@ -277,7 +287,7 @@ init python:
             self.list = list
 
         def l(self):
-            return ShowTransient(self.label, dissolve)
+            return ShowTransient(self.label, dissolve, current_events)
 
 
     def list_common(l1, l2):
@@ -350,8 +360,8 @@ init python:
         if current_events:
             ev = current_events[loc]
             chr = ev[1]
-            chr.action()
-            return Call(ev[0])
+            f = chr.action()
+            return [Function(f), Call(ev[0])]
         else:
             renpy.error('没事件了你怎么还能选啊')
 

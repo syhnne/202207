@@ -63,7 +63,7 @@ label splashscreen:
     return
 
 label after_load:
-    $ print('-Game loaded!-')
+    $ print('---------------Game loaded!----------------')
     return
 
 

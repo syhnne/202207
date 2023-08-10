@@ -8,7 +8,6 @@ screen watch():
         if current_events:
             text 'Events appended.'
 
-
 style developer_text:
     font "SourceHanSansSC-Normal.otf"
     size 20
@@ -116,7 +115,7 @@ label main_loop():
         $ print('current events:', current_events)
     $ _in_map = True
     ## 日尼玛，我开的选项为啥存个档就没了？？
-    call screen school_map()
+    call screen school_map(current_events)
     $ _in_map = False
     '--'
     jump main_loop
@@ -190,7 +189,7 @@ label test_memory:
 
 
 label y_1:
-    '你个老6，有本事你写剧本啊！'
+    'y_1'
     $ yc.add_event( ('y_2', cls2_1) )
     return
 
