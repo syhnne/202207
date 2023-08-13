@@ -88,7 +88,6 @@ label start:
 
 
 
-    scene bg c classroom at hv
 
     $ IRUKA.texting_send.append('script_1')
     $ NAVI.texting_recieved.append('script_2')
