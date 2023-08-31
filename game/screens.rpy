@@ -140,7 +140,87 @@ style code_button_text:
 
 
 
+# The screen that is used for error handling.
+screen exception:
+    modal True
+    zorder 1090
 
+    default tt = __Tooltip("")
+    default fmt_short = __format_traceback(short)
+    default fmt_full = __format_traceback(full)
+
+    frame:
+        style_group ""
+
+        has side "t c b":
+            spacing gui._scale(10)
+
+        side "c r":
+            xfill True
+            label _("An exception has occurred.") text_size gui._scale(40)
+            text "{size=-3}[config.version!q]\n[renpy.version_only!q]\n[renpy.platform!q]{/size}" textalign 1.0 yalign 0.5
+
+        viewport:
+            id "viewport"
+            child_size (4000, None)
+            mousewheel True
+            draggable True
+            scrollbars "both"
+
+            has vbox
+
+            text fmt_short substitute False
+            text fmt_full substitute False
+
+        hbox:
+            vbox:
+                hbox:
+                    spacing gui._scale(25)
+                    box_wrap True
+                    box_wrap_spacing gui._scale(5)
+
+                    if rollback_action and _errorhandling.rollback:
+                        textbutton _("Rollback"):
+                            action rollback_action
+                            tooltip _("Attempts a roll back to a prior time, allowing you to save or choose a different choice.")
+
+                    if ignore_action and _errorhandling.ignore:
+                        textbutton _("Ignore"):
+                            action ignore_action
+
+                            if _ignore_action:
+                                tooltip _("Ignores the exception, allowing you to continue.")
+                            else:
+                                tooltip _("Ignores the exception, allowing you to continue. This often leads to additional errors.")
+
+                    if config.developer and not renpy.mobile:
+                        if _errorhandling.reload:
+                            textbutton _("Reload"):
+                                action reload_action
+                                tooltip _("Reloads the game from disk, saving and restoring game state if possible.")
+
+                        if _errorhandling.console:
+                            textbutton _("Console") :
+                                action __EnterConsole()
+                                tooltip _("Opens a console to allow debugging the problem.")
+
+                    use _exception_actions(traceback_fn, tt)
+
+                # Tooltip.
+                text tt.value
+
+            vbox:
+                xfill True
+
+                textbutton _("Quit"):
+                    xalign 1.0
+                    action __ErrorQuit()
+                    hovered tt.action(_("Quits the game."))
+
+    if config.developer and reload_action:
+        key "reload_game" action reload_action
+
+    key "console" action __EnterConsole()
 
 
 

@@ -207,7 +207,7 @@ init python:
 
 
 
-
+    ## 焯，原来是我用对象当做dict的key导致的吗
 
     import random
 
@@ -287,7 +287,7 @@ init python:
             self.list = list
 
         def l(self):
-            return ShowTransient(self.label, dissolve, current_events)
+            return ShowTransient(self.label, dissolve)
 
 
     def list_common(l1, l2):
@@ -319,14 +319,14 @@ init python:
     ## 新建一个地点：在screen，下面的list里面分别添加这个地点对象，然后再写个label
     playgr = Loc('操场', (100,100), 'playground')
     cafe = Loc('食堂', (300,100), 'cafeteria')
-    t_building = Map('高中楼…', (500,100), 't_b_f1', [cls2_1, cls2_2, cls2_3])
-    s_building = Map('实验楼…', (700,100), 's_b_f1', [sh01, sh04])
-    libr = Map('图书馆楼…', (900,100), 'libr_map', [sroom])
+    t_building = Map('高中楼…', (500,100), 't_b_f1', ['cls2_1', 'cls2_2', 'cls2_3'])
+    s_building = Map('实验楼…', (700,100), 's_b_f1', ['sh01', 'sh04'])
+    libr = Map('图书馆楼…', (900,100), 'libr_map', ['sroom'])
 
     ## chr
-    yc = Chr(0.2, ('y_1',cls2_1), ('y1',playgr), ('y2',cafe), ('y3',sroom))
-    cc = Chr(0.3, ('c_1',sh01), ('c1',cafe), ('c2',sroom), ('c3',sroom))
-    bc = Chr(0.4, ('b_1',sh01), ('b1',cls2_1), ('b2',cls2_1), ('b3',sroom))
+    yc = Chr(0.2, ('y_1','cls2_1'), ('y1','playgr'), ('y2','cafe'), ('y3','sroom'))
+    cc = Chr(0.3, ('c_1','sh01'), ('c1','cafe'), ('c2','sroom'), ('c3','sroom'))
+    bc = Chr(0.4, ('b_1','sh01'), ('b1','cls2_1'), ('b2','cls2_1'), ('b3','sroom'))
 
 
 
@@ -334,8 +334,8 @@ init python:
 
     def get_options():
         opt_dict = {}
-        for chr in {yc,cc,bc}:
-            x = chr.random_event()
+        for chr in {'yc','cc','bc'}:
+            x = eval(chr).random_event()
             if isinstance(x, tuple):
                 opt_dict[x[1]] = (x[0], chr)  ## 放进去一个 地点：（label，角色） 的键值对
                 ## 淦，一不小心写了个自动查重。。那就不改了，回去给chr.random_event加个概率，就说角色不一定会出来找你，这是游戏特性
@@ -355,12 +355,12 @@ init python:
         else:
             return l
 
-    def loc_action(loc):
-        print('loc_action():',str(loc))
+    def loc_action(locn):
+        print('loc_action():',locn)
         if current_events:
-            ev = current_events[loc]
+            ev = current_events[locn]
             chr = ev[1]
-            f = chr.action()
+            f = eval(chr).action()
             return [Function(f), Call(ev[0])]
         else:
             renpy.error('没事件了你怎么还能选啊')

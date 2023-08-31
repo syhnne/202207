@@ -115,7 +115,7 @@ label main_loop():
         $ print('current events:', current_events)
     $ _in_map = True
     ## 日尼玛，我开的选项为啥存个档就没了？？
-    call screen school_map(current_events)
+    call screen school_map
     $ _in_map = False
     '--'
     jump main_loop

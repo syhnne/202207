@@ -1,24 +1,25 @@
 
 
 ## 这个特殊事件的红点提示只能持续一层，如果有两层及以上套娃，就寄了。解决方法很简单：别写多层套娃就行。
-screen map_common(l, bg, sizep, ev):
+screen map_common(l, bg, sizep):
 
     viewport:
         draggable True
         window:
             xysize sizep
             background bg
-            for loc in l:
-                if ev and loc in list(ev.keys()):
+            for locn in l:
+                $ loc = eval(locn)
+                if current_events and (locn in list(current_events.keys())):
                     $ print('has event:',str(loc))
                     imagebutton:
                         idle At('gui/map/loc.png', pixelzoom4)
                         hover At('gui/map/loc.png', hv, pixelzoom4)
                         foreground At('gui/map/loc_evfg.png',pixelzoom4)
                         pos loc.p()
-                        action loc_action(loc)
-                        tooltip ev[loc][0]
-                elif ev and isinstance(loc, Map) and list_common(loc.list, ev.keys()):
+                        action loc_action(locn)
+                        tooltip current_events[locn][0]
+                elif current_events and isinstance(loc, Map) and list_common(loc.list, current_events.keys()):
                     imagebutton:
                         idle At('gui/map/loc.png', pixelzoom4)
                         hover At('gui/map/loc.png', hv, pixelzoom4)
@@ -51,56 +52,56 @@ screen map_common(l, bg, sizep, ev):
 
 
 
-screen school_map(ev):
+screen school_map():
     zorder 1 tag map
-    $ l = [playgr, t_building, cafe, s_building, libr]
-    use map_common(l, 'gui/map/base.png', (3000,3000), ev)
+    $ l = ['playgr', 't_building', 'cafe', 's_building', 'libr']
+    use map_common(l, 'gui/map/base.png', (3000,3000))
 
 
 
 
 
-screen t_b_f1(ev):
+screen t_b_f1():
     zorder 2 tag map
-    $ l = [cls2_1, cls2_2, ]
-    use map_common(l, 'gui/map/base.png', (3000,3000), ev):
-        textbutton '返回' action ShowTransient('school_map', dissolve, ev)
-        textbutton '2层' action ShowTransient('t_b_f2', dissolve, ev)
+    $ l = ['cls2_1', 'cls2_2', ]
+    use map_common(l, 'gui/map/base.png', (3000,3000)):
+        textbutton '返回' action ShowTransient('school_map', dissolve)
+        textbutton '2层' action ShowTransient('t_b_f2', dissolve)
             
 
-screen t_b_f2(ev):
+screen t_b_f2():
     zorder 2 tag map
-    $ l = [cls2_3, ]
-    use map_common(l, 'gui/map/base.png', (3000,3000), ev):
-        textbutton '返回' action Show('school_map', dissolve, ev)
-        textbutton '1层' action Show('t_b_f1', dissolve, ev)
+    $ l = ['cls2_3', ]
+    use map_common(l, 'gui/map/base.png', (3000,3000)):
+        textbutton '返回' action Show('school_map', dissolve)
+        textbutton '1层' action Show('t_b_f1', dissolve)
 
 
 
 
-screen s_b_f1(ev):
+screen s_b_f1():
     zorder 2 tag map
-    $ l = [sh01]
-    use map_common(l, 'gui/map/base.png', (3000,3000), ev):
-        textbutton '返回' action Show('school_map', dissolve, ev)
-        textbutton '2层' action Show('s_b_f2', dissolve, ev)    
+    $ l = ['sh01']
+    use map_common(l, 'gui/map/base.png', (3000,3000)):
+        textbutton '返回' action Show('school_map', dissolve)
+        textbutton '2层' action Show('s_b_f2', dissolve)    
 
-screen s_b_f2(ev):
+screen s_b_f2():
     zorder 2 tag map
-    $ l = [sh04]
-    use map_common(l, 'gui/map/base.png', (3000,3000), ev):
-        textbutton '返回' action Show('school_map', dissolve, ev)
-        textbutton '1层' action Show('s_b_f1', dissolve, ev)   
+    $ l = ['sh04']
+    use map_common(l, 'gui/map/base.png', (3000,3000)):
+        textbutton '返回' action Show('school_map', dissolve)
+        textbutton '1层' action Show('s_b_f1', dissolve)   
 
 
 
 
 
-screen libr_map(ev):
+screen libr_map():
     zorder 2 tag map
-    $ l = [sroom]
-    use map_common(l, 'gui/map/base.png', (3000,3000), ev):
-        textbutton '返回' action Show('school_map', dissolve, ev)
+    $ l = ['sroom']
+    use map_common(l, 'gui/map/base.png', (3000,3000)):
+        textbutton '返回' action Show('school_map', dissolve)
 
 
 

@@ -85,7 +85,8 @@ label after_load:
 label start:
     $ print('-------------------Game started!------------------------')
     
-
+    # '家人们，试试这个'
+    # $ renpy.error('Character \'y\' has been defined twice.')
 
 
 
